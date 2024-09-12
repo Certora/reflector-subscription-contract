@@ -565,10 +565,10 @@ fn calc_ledgers_to_live(e: &Env, fee: u64, amount: u64) -> u32 {
     ledgers
 }
 
-fn spec_entrypt(env: soroban_sdk::Env, fee: u64, amount: u64, address: Address) {
-    // let ledgers = calc_ledgers_to_live(&env, fee, amount);
+fn spec_entrypt(env: soroban_sdk::Env, fee: u64, amount: u64) {
+    let ledgers = calc_ledgers_to_live(&env, fee, amount);
     // let now = now(&env);
-    withdraw(&env, &address, amount);
+    // withdraw(&env, &address, amount);
     cvt::assert!(false);
 }
 
@@ -576,8 +576,8 @@ fn spec_entrypt(env: soroban_sdk::Env, fee: u64, amount: u64, address: Address) 
 pub extern "C" fn entrypt(env: Env) {
     let fee = u64::nondet();
     let amount = u64::nondet();
-    let address = nondet::<Address>();
-    spec_entrypt(env, fee, amount, address);
+    // let address = nondet::<Address>();
+    spec_entrypt(env, fee, amount);
 }
 
 mod test;
