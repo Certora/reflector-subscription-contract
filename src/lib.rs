@@ -2,15 +2,21 @@
 
 mod extensions;
 mod types;
+mod certora;
 
 use extensions::{env_extensions::EnvExtensions, u128_extensions::U128Extensions};
+use nondet::*;
 use soroban_sdk::{
-    contract, contractimpl, panic_with_error, symbol_short, token::TokenClient, Address, BytesN, Env, Symbol, Vec,
+    contract, contractimpl, panic_with_error, symbol_short, Address, BytesN, Env, Symbol, Vec
 };
+
 use types::{
     contract_config::ContractConfig, error::Error, subscription::Subscription,
-    subscription_init_params::SubscriptionInitParams, subscription_status::SubscriptionStatus, ticker_asset::TickerAsset,
+    subscription_init_params::SubscriptionInitParams, subscription_status::SubscriptionStatus,
+    ticker_asset::TickerAsset,
 };
+
+use certora::token::CertoraTokenClient;
 
 const REFLECTOR: Symbol = symbol_short!("reflector");
 
@@ -108,7 +114,12 @@ impl SubscriptionContract {
                 if days_charged == 0 {
                     continue;
                 }
-                let fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
+                let fee = calc_fee(
+                    e.get_fee(),
+                    &subscription.base,
+                    &subscription.quote,
+                    subscription.heartbeat,
+                );
                 let mut charge = days_charged * fee;
                 // Do not charge more than left on the subscription balance
                 if subscription.balance < charge {
@@ -196,7 +207,12 @@ impl SubscriptionContract {
         // Check the authorization
         new_subscription.owner.require_auth();
         // Calculate daily retention fee based on subscription params
-        let retention_fee = calc_fee(e.get_fee(), &new_subscription.base, &new_subscription.quote, new_subscription.heartbeat);
+        let retention_fee = calc_fee(
+            e.get_fee(),
+            &new_subscription.base,
+            &new_subscription.quote,
+            new_subscription.heartbeat,
+        );
         // Creation fee is 2 times the daily retention fee
         let init_fee = retention_fee * 2;
         // Check the amount
@@ -235,11 +251,16 @@ impl SubscriptionContract {
         e.set_subscription(subscription_id, &subscription);
         e.set_last_subscription_id(subscription_id);
         // Extend TTL based on the subscription retention fee and balance
-        e.extend_subscription_ttl(subscription_id, calc_ledgers_to_live(&e, retention_fee, subscription.balance));
+        e.extend_subscription_ttl(
+            subscription_id,
+            calc_ledgers_to_live(&e, retention_fee, subscription.balance),
+        );
         // Publish subscription created event
         let data = (subscription_id, subscription.clone());
-        e.events()
-            .publish((REFLECTOR, symbol_short!("created"), subscription.owner), data.clone());
+        e.events().publish(
+            (REFLECTOR, symbol_short!("created"), subscription.owner),
+            data.clone(),
+        );
         return data;
     }
 
@@ -269,7 +290,12 @@ impl SubscriptionContract {
             .get_subscription(subscription_id)
             .unwrap_or_else(|| panic_with_error!(e, Error::SubscriptionNotFound));
         // Calculate daily retention fee based on subscription params
-        let retention_fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
+        let retention_fee = calc_fee(
+            e.get_fee(),
+            &subscription.base,
+            &subscription.quote,
+            subscription.heartbeat,
+        );
         // Transfer tokens
         deposit(&e, &from, amount);
         // Update subscription balance
@@ -288,10 +314,17 @@ impl SubscriptionContract {
         // Update state
         e.set_subscription(subscription_id, &subscription);
         // Extend TTL based on the subscription retention fee and balance
-        e.extend_subscription_ttl(subscription_id, calc_ledgers_to_live(&e, retention_fee, subscription.balance));
+        e.extend_subscription_ttl(
+            subscription_id,
+            calc_ledgers_to_live(&e, retention_fee, subscription.balance),
+        );
         // Publish subscription deposited event
         e.events().publish(
-            (REFLECTOR, symbol_short!("deposited"), subscription.owner.clone()),
+            (
+                REFLECTOR,
+                symbol_short!("deposited"),
+                subscription.owner.clone(),
+            ),
             (subscription_id, subscription, amount),
         );
     }
@@ -319,7 +352,8 @@ impl SubscriptionContract {
         subscription.owner.require_auth();
         match subscription.status {
             SubscriptionStatus::Active => {}
-            _ => { // Panic if the subscription is not active at the moment
+            _ => {
+                // Panic if the subscription is not active at the moment
                 e.panic_with_error(Error::InvalidSubscriptionStatusError);
             }
         }
@@ -328,8 +362,10 @@ impl SubscriptionContract {
         // Remove subscription from the state
         e.remove_subscription(subscription_id);
         // Publish subscription cancelled event
-        e.events()
-            .publish((REFLECTOR, symbol_short!("cancelled"), subscription.owner), subscription_id);
+        e.events().publish(
+            (REFLECTOR, symbol_short!("cancelled"), subscription.owner),
+            subscription_id,
+        );
     }
 
     // Get subscription by ID
@@ -370,10 +406,16 @@ impl SubscriptionContract {
     pub fn get_retention_fee(e: Env, subscription_id: u64) -> u64 {
         panic_if_not_initialized(&e);
         // Load subscription
-        let subscription = e.get_subscription(subscription_id)
+        let subscription = e
+            .get_subscription(subscription_id)
             .unwrap_or_else(|| panic_with_error!(e, Error::SubscriptionNotFound));
         // Calculate daily retention fee based on subscription params
-        calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat)
+        calc_fee(
+            e.get_fee(),
+            &subscription.base,
+            &subscription.quote,
+            subscription.heartbeat,
+        )
     }
 
     // Get the last subscription ID
@@ -446,7 +488,12 @@ impl SubscriptionContract {
     }
 }
 
-pub fn calc_fee(base_fee: u64, base_symbol: &TickerAsset, quote_symbol: &TickerAsset, heartbeat: u32) -> u64 {
+pub fn calc_fee(
+    base_fee: u64,
+    base_symbol: &TickerAsset,
+    quote_symbol: &TickerAsset,
+    heartbeat: u32,
+) -> u64 {
     let heartbeat_fee = calc_hearbeat_fee(base_fee, heartbeat);
     let complexity_factor = calc_complexity_factor(base_symbol, quote_symbol);
     heartbeat_fee * complexity_factor
@@ -455,7 +502,8 @@ pub fn calc_fee(base_fee: u64, base_symbol: &TickerAsset, quote_symbol: &TickerA
 fn calc_hearbeat_fee(base_fee: u64, heartbeat: u32) -> u64 {
     //120 is reference heartbeat
     let hearbeat_fee = (120u128 * ((base_fee as u128).pow(2)) / (heartbeat as u128)).sqrt() as u64;
-    if hearbeat_fee < base_fee { // Minimum fee is base fee
+    if hearbeat_fee < base_fee {
+        // Minimum fee is base fee
         return base_fee;
     }
     hearbeat_fee as u64
@@ -476,8 +524,8 @@ fn panic_if_not_initialized(e: &Env) {
 }
 
 // Initialize a client for Reflector token contract
-fn get_token_client(e: &Env) -> TokenClient {
-    TokenClient::new(e, &e.get_token())
+fn get_token_client(e: &Env) -> CertoraTokenClient {
+    CertoraTokenClient::new(e, &e.get_token())
 }
 
 // Transfer tokens to the contract balance
@@ -513,7 +561,23 @@ fn calc_ledgers_to_live(e: &Env, fee: u64, amount: u64) -> u32 {
     if ledgers > e.storage().max_ttl() {
         panic_with_error!(e, Error::InvalidAmount);
     }
+
     ledgers
+}
+
+fn spec_entrypt(env: soroban_sdk::Env, fee: u64, amount: u64, address: Address) {
+    // let ledgers = calc_ledgers_to_live(&env, fee, amount);
+    // let now = now(&env);
+    withdraw(&env, &address, amount);
+    cvt::assert!(false);
+}
+
+#[export_name = "sunbeam_entrypt"]
+pub extern "C" fn entrypt(env: Env) {
+    let fee = u64::nondet();
+    let amount = u64::nondet();
+    let address = nondet::<Address>();
+    spec_entrypt(env, fee, amount, address);
 }
 
 mod test;

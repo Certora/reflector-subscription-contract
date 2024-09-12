@@ -10,7 +10,6 @@ crate-type = ["cdylib"]
 opt-level = "z"
 overflow-checks = true
 debug = 0
-strip = "symbols"
 debug-assertions = false
 panic = "abort"
 codegen-units = 1
@@ -18,6 +17,8 @@ lto = true
 
 [dependencies]
 soroban-sdk = "21.6.0"
+nondet = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban", default-features=false, features=["soroban"]}
+cvt = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban"}
 
 [dev-dependencies]
 soroban-sdk = { version = "21.6.0", features = ["testutils"] }
