@@ -1,14 +1,42 @@
 #![allow(non_upper_case_globals)]
-use soroban_sdk::storage::{Instance, Persistent};
-use soroban_sdk::{panic_with_error, Address, Env};
+use core::iter::Map;
 
-use crate::types;
+use nondet::Nondet;
+use soroban_sdk::storage::{Instance, Persistent};
+use soroban_sdk::{panic_with_error, Address, Env, String};
+
+use crate::{types};
 
 use types::{error::Error, subscription::Subscription};
 const ADMIN_KEY: &str = "admin";
 const BASE_FEE: &str = "base_fee";
 const LAST_SUBSCRIPTION_ID: &str = "last";
 const TOKEN_KEY: &str = "token";
+
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CertoraStorage {
+    fee: u64,
+    sub: Subscription
+}
+
+
+impl Nondet for CertoraStorage {
+    fn nondet() -> Self {
+        CertoraStorage {
+            sub: Subscription::nondet(),
+            fee: u64::nondet(),
+        }
+    }
+}
+
+pub static mut STORAGE: Option<CertoraStorage> = None;
+
+pub(crate) fn init_persistent_storage() {
+    unsafe {
+        STORAGE = Some(CertoraStorage::nondet());
+    }
+}
 
 pub trait EnvExtensions {
     fn get_admin(&self) -> Option<Address>;
@@ -40,6 +68,7 @@ pub trait EnvExtensions {
     fn is_initialized(&self) -> bool;
 }
 
+
 impl EnvExtensions for Env {
     fn is_initialized(&self) -> bool {
         get_instance_storage(&self).has(&ADMIN_KEY)
@@ -54,7 +83,8 @@ impl EnvExtensions for Env {
     }
 
     fn get_fee(&self) -> u64 {
-        get_instance_storage(&self).get(&BASE_FEE).unwrap_or(0)
+        unsafe { STORAGE.clone().unwrap().fee }
+        // get_instance_storage(&self).get(&BASE_FEE).unwrap_or(0)
     }
 
     fn set_fee(&self, base_fee: u64) {
@@ -80,7 +110,8 @@ impl EnvExtensions for Env {
     }
 
     fn get_subscription(&self, subscription_id: u64) -> Option<Subscription> {
-        get_persistent_storage(&self).get(&subscription_id)
+        // get_persistent_storage(&self).get(&subscription_id)
+        unsafe { Some(STORAGE.clone().unwrap().sub) }
     }
 
     fn set_subscription(&self, subscription_id: u64, subscription: &Subscription) {

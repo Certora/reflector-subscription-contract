@@ -1,4 +1,6 @@
-use soroban_sdk::{contracttype, String};
+use cvt::CVT_nondet_u8;
+use nondet::Nondet;
+use soroban_sdk::{contracttype, Env, String};
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
 
@@ -8,4 +10,14 @@ pub struct TickerAsset {
     pub asset: String,
     // Price feed source
     pub source: String
+} 
+
+
+impl Nondet for TickerAsset {
+    fn nondet() -> Self {
+        TickerAsset {
+            asset: String::nondet(),
+            source: String::nondet()
+        }
+    }
 }

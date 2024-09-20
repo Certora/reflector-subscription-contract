@@ -3,6 +3,7 @@ pub trait U128Extensions {
 }
 
 impl U128Extensions for u128 {
+    #[inline(never)]
     fn sqrt(self) -> u128 {
         if self == 0 {
             return 0;
