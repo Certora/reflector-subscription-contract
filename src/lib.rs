@@ -1,18 +1,24 @@
 #![no_std]
 
+mod certora;
 mod extensions;
 mod types;
-mod certora;
 
-use extensions::{env_extensions::{init_persistent_storage, EnvExtensions}, u128_extensions::U128Extensions};
+use extensions::{
+    env_extensions::{init_persistent_storage, EnvExtensions, STORAGE},
+    u128_extensions::U128Extensions,
+};
 use nondet::*;
 use soroban_sdk::{
-    contract, contractimpl, panic_with_error, symbol_short, Address, BytesN, Env, Symbol, Vec
+    contract, contractimpl, panic_with_error, symbol_short, Address, BytesN, Env, Symbol, Vec,
 };
 
 use types::{
-    contract_config::ContractConfig, error::Error, subscription::Subscription,
-    subscription_init_params::SubscriptionInitParams, subscription_status::SubscriptionStatus,
+    contract_config::ContractConfig,
+    error::Error,
+    subscription::{self, Subscription},
+    subscription_init_params::SubscriptionInitParams,
+    subscription_status::SubscriptionStatus,
     ticker_asset::TickerAsset,
 };
 
@@ -108,13 +114,11 @@ impl SubscriptionContract {
         let mut total_charge: u64 = 0;
         let now = now(&e);
         // for subscription_id in subscription_ids.iter() {
-            if let Some(mut subscription) = e.get_subscription(subscription_id) {
-                // We can charge fees for several days in case if there was an interruption in background worker charge process
-                let days_charged = (now - subscription.updated) / DAY;
-                // if days_charged == 0 {
-                //     continue;
-                // }
-                let fee: u64 = calc_fee(
+        if let Some(mut subscription) = e.get_subscription(subscription_id) {
+            // We can charge fees for several days in case if there was an interruption in background worker charge process
+            let days_charged = (now - subscription.updated) / DAY;
+            if days_charged != 0 {
+                let fee = calc_fee(
                     e.get_fee(),
                     &subscription.base,
                     &subscription.quote,
@@ -151,14 +155,15 @@ impl SubscriptionContract {
                     // );
                 }
                 // Update subscription properties
-                // e.set_subscription(subscription_id, &subscription);
+                e.set_subscription(subscription_id, &subscription);
                 // Sum all retention fee charges
                 total_charge += charge;
             }
-        // }
-        // Burn tokens charged from all subscriptions
-        if total_charge > 0 {
-            get_token_client(&e).burn(&e.current_contract_address(), &(total_charge as i128));
+            // }
+            // Burn tokens charged from all subscriptions
+            if total_charge > 0 {
+                get_token_client(&e).burn(&e.current_contract_address(), &(total_charge as i128));
+            }
         }
     }
 
@@ -583,7 +588,6 @@ fn spec_entrypt2(base_symbol: &TickerAsset, quote_symbol: &TickerAsset) {
     // cvt::assert!(false);
 }
 
-
 fn spec_entrypt(env: soroban_sdk::Env, fee: u64, amount: u64) {
     let ledgers = calc_ledgers_to_live(&env, fee, amount);
     // let now = now(&env);
@@ -593,35 +597,27 @@ fn spec_entrypt(env: soroban_sdk::Env, fee: u64, amount: u64) {
 
 #[inline(never)]
 fn spec_entrypt3(env: Env, subscription_id: u64) {
+    let fee = u64::nondet();
+    let mut subscription = env.get_subscription(subscription_id).unwrap();
+    if subscription.balance < fee {
+        subscription.status = SubscriptionStatus::Suspended;
+    }
+    env.set_subscription(subscription_id, &subscription);
     let subscription = env.get_subscription(subscription_id).unwrap();
-    // let subscription2 = env.get_subscription(subscription_id);
-    // let fee = calc_fee(
-    //     env.get_fee(),
-    //     &subscription.base,
-    //     &subscription.quote,
-    //     subscription.heartbeat,
-    // );
-    // let status_before = subscription.status;
-    SubscriptionContract::charge(env, subscription_id);
-    cvt::assert!(false);
-    // let status_after = subscription.status;
-    // CVT_assert(subscription.balance >= fee || (status_after == SubscriptionStatus::Suspended));
-    // CVT_assert(subscription1 == subscription2); // should work
+    cvt::assert!(
+        subscription.balance >= fee || (subscription.status == SubscriptionStatus::Suspended)
+    );
 }
-
 
 #[export_name = "sunbeam_entrypt"]
 pub extern "C" fn entrypt() {
-    let env = Env::default(); 
-    // let fee = u64::nondet();
-    // let amount = u64::nondet();
-    let subscription_id: u64 = u64::nondet();
+    let env = Env::default();
+    let subscription_id = u64::nondet();
     // let base_symbol = &TickerAsset::nondet();
     // let address = nondet::<Address>();
     // let quote_symbol = &TickerAsset::nondet();
     // spec_entrypt1(env, fee, amount, address);
     // spec_entrypt2(base_symbol, quote_symbol);
-    init_persistent_storage();
     spec_entrypt3(env, subscription_id);
 }
 

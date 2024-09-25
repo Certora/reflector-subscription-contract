@@ -16,8 +16,7 @@ const TOKEN_KEY: &str = "token";
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CertoraStorage {
-    fee: u64,
-    sub: Subscription
+    pub sub: Subscription
 }
 
 
@@ -25,7 +24,6 @@ impl Nondet for CertoraStorage {
     fn nondet() -> Self {
         CertoraStorage {
             sub: Subscription::nondet(),
-            fee: u64::nondet(),
         }
     }
 }
@@ -83,8 +81,7 @@ impl EnvExtensions for Env {
     }
 
     fn get_fee(&self) -> u64 {
-        unsafe { STORAGE.clone().unwrap().fee }
-        // get_instance_storage(&self).get(&BASE_FEE).unwrap_or(0)
+        get_instance_storage(&self).get(&BASE_FEE).unwrap_or(0)
     }
 
     fn set_fee(&self, base_fee: u64) {
@@ -110,8 +107,8 @@ impl EnvExtensions for Env {
     }
 
     fn get_subscription(&self, subscription_id: u64) -> Option<Subscription> {
-        // get_persistent_storage(&self).get(&subscription_id)
-        unsafe { Some(STORAGE.clone().unwrap().sub) }
+        get_persistent_storage(&self).get(&subscription_id)
+        // unsafe { Some(STORAGE.clone().unwrap().sub) }
     }
 
     fn set_subscription(&self, subscription_id: u64, subscription: &Subscription) {
