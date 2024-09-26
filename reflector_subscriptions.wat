@@ -18,30 +18,29 @@
   (type $t16 (func (param i64 i64 i64)))
   (type $t17 (func (param i64)))
   (type $t18 (func))
-  (type $t19 (func (param i64 i64 i64 i64)))
-  (type $t20 (func (result i32)))
-  (type $t21 (func (param i64 i32)))
-  (type $t22 (func (param i32 i64 i64)))
-  (type $t23 (func (param i64 i64 i64 i32) (result i64)))
-  (type $t24 (func (param i64 i32) (result i64)))
-  (type $t25 (func (param i64 i64)))
-  (type $t26 (func (param i32 i32)))
-  (type $t27 (func (param i64 i32 i32) (result i32)))
-  (type $t28 (func (param i32 i32 i32 i32 i32 i32) (result i32)))
-  (type $t29 (func (param i32 i32 i32 i32 i32) (result i32)))
-  (type $t30 (func (param i32 i64 i64 i64 i64)))
-  (type $t31 (func (param i32 i64 i64 i32)))
+  (type $t19 (func (result i32)))
+  (type $t20 (func (param i64 i32)))
+  (type $t21 (func (param i32 i64 i64)))
+  (type $t22 (func (param i64 i64 i64 i32) (result i64)))
+  (type $t23 (func (param i64 i32) (result i64)))
+  (type $t24 (func (param i64 i64)))
+  (type $t25 (func (param i32 i32)))
+  (type $t26 (func (param i64 i32 i32) (result i32)))
+  (type $t27 (func (param i32 i32 i32 i32 i32 i32) (result i32)))
+  (type $t28 (func (param i32 i32 i32 i32 i32) (result i32)))
+  (type $t29 (func (param i32 i64 i64 i64 i64)))
+  (type $t30 (func (param i32 i64 i64 i32)))
   (import "i" "_" (func $_ZN17soroban_env_guest5guest3int12obj_from_u6417h7d37ec496131980bE (type $t2)))
   (import "i" "0" (func $_ZN17soroban_env_guest5guest3int10obj_to_u6417hbb6d38584bda580fE (type $t2)))
   (import "l" "1" (func $_ZN17soroban_env_guest5guest6ledger17get_contract_data17ha528d50bee9cc062E (type $t3)))
   (import "l" "_" (func $_ZN17soroban_env_guest5guest6ledger17put_contract_data17ha1a2857efbadb884E (type $t4)))
   (import "b" "i" (func $_ZN17soroban_env_guest5guest3buf29string_new_from_linear_memory17h7993bd36c45e84bfE (type $t3)))
-  (import "i" "6" (func $_ZN17soroban_env_guest5guest3int20obj_from_i128_pieces17h36a7799f873c36afE (type $t3)))
-  (import "d" "_" (func $_ZN17soroban_env_guest5guest4call4call17hea10fef78e35f49cE (type $t4)))
   (import "l" "7" (func $_ZN17soroban_env_guest5guest6ledger24extend_contract_data_ttl17hcf3d429e8b8cf13bE (type $t5)))
   (import "a" "0" (func $_ZN17soroban_env_guest5guest7address12require_auth17h70ca29532099b3d1E (type $t2)))
   (import "x" "0" (func $_ZN17soroban_env_guest5guest7context7obj_cmp17h31dba2f17333af48E (type $t3)))
   (import "x" "7" (func $_ZN17soroban_env_guest5guest7context28get_current_contract_address17h3819835f93991fffE (type $t6)))
+  (import "i" "6" (func $_ZN17soroban_env_guest5guest3int20obj_from_i128_pieces17h36a7799f873c36afE (type $t3)))
+  (import "d" "_" (func $_ZN17soroban_env_guest5guest4call4call17hea10fef78e35f49cE (type $t4)))
   (import "x" "4" (func $_ZN17soroban_env_guest5guest7context20get_ledger_timestamp17h0f3bee5a4ced74c4E (type $t6)))
   (import "x" "3" (func $_ZN17soroban_env_guest5guest7context19get_ledger_sequence17h51f98c2ba0fbfe59E (type $t6)))
   (import "x" "8" (func $_ZN17soroban_env_guest5guest7context25get_max_live_until_ledger17h6c65abc6adf353a2E (type $t6)))
@@ -1077,130 +1076,7 @@
   (func $_ZN4core9panicking9panic_fmt17h5c7ce52813e94bcdE (type $t18)
     unreachable
     unreachable)
-  (func $_ZN23reflector_subscriptions7certora5token18CertoraTokenClient4burn17h5f5f52a5158ee107E (type $t19) (param $p0 i64) (param $p1 i64) (param $p2 i64) (param $p3 i64)
-    (local $l4 i32) (local $l5 i32)
-    global.get $__stack_pointer
-    i32.const 32
-    i32.sub
-    local.tee $l4
-    global.set $__stack_pointer
-    block  ;; label = @1
-      block  ;; label = @2
-        local.get $p2
-        i64.const 36028797018963968
-        i64.add
-        i64.const 72057594037927935
-        i64.gt_u
-        br_if 0 (;@2;)
-        local.get $p2
-        local.get $p2
-        i64.xor
-        local.get $p2
-        i64.const 63
-        i64.shr_s
-        local.get $p3
-        i64.xor
-        i64.or
-        i64.const 0
-        i64.ne
-        br_if 0 (;@2;)
-        local.get $p2
-        i64.const 8
-        i64.shl
-        i64.const 11
-        i64.or
-        local.set $p2
-        br 1 (;@1;)
-      end
-      local.get $p3
-      local.get $p2
-      call $_ZN17soroban_env_guest5guest3int20obj_from_i128_pieces17h36a7799f873c36afE
-      local.set $p2
-    end
-    local.get $l4
-    local.get $p2
-    i64.store offset=8
-    local.get $l4
-    local.get $p1
-    i64.store
-    i32.const 0
-    local.set $l5
-    block  ;; label = @1
-      loop  ;; label = @2
-        block  ;; label = @3
-          local.get $l5
-          i32.const 16
-          i32.ne
-          br_if 0 (;@3;)
-          i32.const 0
-          local.set $l5
-          block  ;; label = @4
-            loop  ;; label = @5
-              local.get $l5
-              i32.const 16
-              i32.eq
-              br_if 1 (;@4;)
-              local.get $l4
-              i32.const 16
-              i32.add
-              local.get $l5
-              i32.add
-              local.get $l4
-              local.get $l5
-              i32.add
-              i64.load
-              i64.store
-              local.get $l5
-              i32.const 8
-              i32.add
-              local.set $l5
-              br 0 (;@5;)
-            end
-          end
-          local.get $p0
-          i64.const 2678977294
-          local.get $l4
-          i32.const 16
-          i32.add
-          i32.const 2
-          call $_ZN74_$LT$soroban_sdk..env..Env$u20$as$u20$soroban_env_common..env..EnvBase$GT$18vec_new_from_slice17hb389c0723dfe99baE
-          call $_ZN17soroban_env_guest5guest4call4call17hea10fef78e35f49cE
-          i64.const 255
-          i64.and
-          i64.const 2
-          i64.ne
-          br_if 2 (;@1;)
-          local.get $l4
-          i32.const 32
-          i32.add
-          global.set $__stack_pointer
-          return
-        end
-        local.get $l4
-        i32.const 16
-        i32.add
-        local.get $l5
-        i32.add
-        i64.const 2
-        i64.store
-        local.get $l5
-        i32.const 8
-        i32.add
-        local.set $l5
-        br 0 (;@2;)
-      end
-    end
-    i32.const 1049552
-    local.get $l4
-    i32.const 16
-    i32.add
-    i32.const 1049596
-    call $_ZN4core6result13unwrap_failed17h4ed86702351a3017E
-    unreachable)
-  (func $_ZN4core6result13unwrap_failed17h4ed86702351a3017E (type $t9) (param $p0 i32) (param $p1 i32) (param $p2 i32)
-    call $_ZN4core9panicking9panic_fmt17h5c7ce52813e94bcdE
-    unreachable)
-  (func $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$14is_initialized17hc79e2cc294a64020E (type $t20) (result i32)
+  (func $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$14is_initialized17hc79e2cc294a64020E (type $t19) (result i32)
     i32.const 1048652
     i32.const 5
     call $_ZN60_$LT$U$u20$as$u20$soroban_sdk..env..IntoVal$LT$E$C$T$GT$$GT$8into_val17hca3101866f5d7829E
@@ -1538,7 +1414,7 @@
     end
     unreachable
     unreachable)
-  (func $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$16set_subscription17h5c9e7341f7aa60f9E (type $t21) (param $p0 i64) (param $p1 i32)
+  (func $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$16set_subscription17h5c9e7341f7aa60f9E (type $t20) (param $p0 i64) (param $p1 i32)
     local.get $p0
     call $_ZN103_$LT$soroban_env_common..val..Val$u20$as$u20$soroban_env_common..convert..TryFromVal$LT$E$C$u64$GT$$GT$12try_from_val17h5b8f0296deff25f8E
     local.get $p1
@@ -1546,7 +1422,7 @@
     i64.const 1
     call $_ZN17soroban_env_guest5guest6ledger17put_contract_data17ha1a2857efbadb884E
     drop)
-  (func $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$23extend_subscription_ttl17h01c342404f04f39dE (type $t21) (param $p0 i64) (param $p1 i32)
+  (func $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$23extend_subscription_ttl17h01c342404f04f39dE (type $t20) (param $p0 i64) (param $p1 i32)
     local.get $p0
     call $_ZN103_$LT$soroban_env_common..val..Val$u20$as$u20$soroban_env_common..convert..TryFromVal$LT$E$C$u64$GT$$GT$12try_from_val17h5b8f0296deff25f8E
     i64.const 1
@@ -1601,7 +1477,7 @@
     local.get $p0
     call $_ZN17soroban_env_guest5guest7context15fail_with_error17h40be9d33fc4b7d02E
     drop)
-  (func $_ZN93_$LT$u128$u20$as$u20$reflector_subscriptions..extensions..u128_extensions..U128Extensions$GT$4sqrt17h24936597bfbd1b2cE (type $t22) (param $p0 i32) (param $p1 i64) (param $p2 i64)
+  (func $_ZN93_$LT$u128$u20$as$u20$reflector_subscriptions..extensions..u128_extensions..U128Extensions$GT$4sqrt17h24936597bfbd1b2cE (type $t21) (param $p0 i32) (param $p1 i64) (param $p2 i64)
     (local $l3 i32) (local $l4 i64) (local $l5 i64) (local $l6 i64) (local $l7 i64) (local $l8 i64) (local $l9 i32) (local $l10 i64)
     global.get $__stack_pointer
     i32.const 16
@@ -1769,7 +1645,7 @@
   (func $_ZN4core9panicking11panic_const23panic_const_div_by_zero17h22ae5ed81ae7585cE (type $t18)
     call $_ZN4core9panicking9panic_fmt17h5c7ce52813e94bcdE
     unreachable)
-  (func $_ZN23reflector_subscriptions8calc_fee17hd1e30741a87aa882E (type $t23) (param $p0 i64) (param $p1 i64) (param $p2 i64) (param $p3 i32) (result i64)
+  (func $_ZN23reflector_subscriptions8calc_fee17hd1e30741a87aa882E (type $t22) (param $p0 i64) (param $p1 i64) (param $p2 i64) (param $p3 i32) (result i64)
     (local $l4 i32)
     global.get $__stack_pointer
     i32.const 16
@@ -1804,7 +1680,7 @@
     end
     call $_ZN4core9panicking11panic_const23panic_const_div_by_zero17h22ae5ed81ae7585cE
     unreachable)
-  (func $_ZN23reflector_subscriptions17calc_hearbeat_fee17h3f08310979cd2d11E (type $t24) (param $p0 i64) (param $p1 i32) (result i64)
+  (func $_ZN23reflector_subscriptions17calc_hearbeat_fee17h3f08310979cd2d11E (type $t23) (param $p0 i64) (param $p1 i32) (result i64)
     (local $l2 i32) (local $l3 i32) (local $l4 i64) (local $l5 i64) (local $l6 i32)
     global.get $__stack_pointer
     i32.const 96
@@ -1961,7 +1837,7 @@
       unreachable
       unreachable
     end)
-  (func $_ZN23reflector_subscriptions7deposit17h6127f8751d277951E (type $t25) (param $p0 i64) (param $p1 i64)
+  (func $_ZN23reflector_subscriptions7deposit17h6127f8751d277951E (type $t24) (param $p0 i64) (param $p1 i64)
     call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$9get_token17hee245acc3c635e5cE
     drop
     call $_ZN17soroban_env_guest5guest7context28get_current_contract_address17h3819835f93991fffE
@@ -1970,22 +1846,140 @@
     local.get $p1
     i64.const 0
     call $_ZN23reflector_subscriptions7certora5token18CertoraTokenClient8transfer17h797753d17e70794aE)
-  (func $_ZN23reflector_subscriptions4burn17hb9321b8a8b1bf1caE (type $t25) (param $p0 i64) (param $p1 i64)
+  (func $_ZN23reflector_subscriptions4burn17hb9321b8a8b1bf1caE (type $t24) (param $p0 i64) (param $p1 i64)
+    (local $l2 i32) (local $l3 i64) (local $l4 i32)
+    global.get $__stack_pointer
+    i32.const 32
+    i32.sub
+    local.tee $l2
+    global.set $__stack_pointer
     block  ;; label = @1
       local.get $p0
       local.get $p1
       i64.gt_u
       br_if 0 (;@1;)
       call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$9get_token17hee245acc3c635e5cE
+      local.set $p1
       call $_ZN17soroban_env_guest5guest7context28get_current_contract_address17h3819835f93991fffE
+      local.set $l3
+      block  ;; label = @2
+        block  ;; label = @3
+          local.get $p0
+          i64.const 36028797018963968
+          i64.add
+          i64.const 72057594037927935
+          i64.gt_u
+          br_if 0 (;@3;)
+          local.get $p0
+          local.get $p0
+          i64.xor
+          local.get $p0
+          i64.const 63
+          i64.shr_s
+          i64.or
+          i64.const 0
+          i64.ne
+          br_if 0 (;@3;)
+          local.get $p0
+          i64.const 8
+          i64.shl
+          i64.const 11
+          i64.or
+          local.set $p0
+          br 1 (;@2;)
+        end
+        i64.const 0
+        local.get $p0
+        call $_ZN17soroban_env_guest5guest3int20obj_from_i128_pieces17h36a7799f873c36afE
+        local.set $p0
+      end
+      local.get $l2
       local.get $p0
-      i64.const 0
-      call $_ZN23reflector_subscriptions7certora5token18CertoraTokenClient4burn17h5f5f52a5158ee107E
-      return
+      i64.store offset=8
+      local.get $l2
+      local.get $l3
+      i64.store
+      i32.const 0
+      local.set $l4
+      block  ;; label = @2
+        loop  ;; label = @3
+          block  ;; label = @4
+            local.get $l4
+            i32.const 16
+            i32.ne
+            br_if 0 (;@4;)
+            i32.const 0
+            local.set $l4
+            block  ;; label = @5
+              loop  ;; label = @6
+                local.get $l4
+                i32.const 16
+                i32.eq
+                br_if 1 (;@5;)
+                local.get $l2
+                i32.const 16
+                i32.add
+                local.get $l4
+                i32.add
+                local.get $l2
+                local.get $l4
+                i32.add
+                i64.load
+                i64.store
+                local.get $l4
+                i32.const 8
+                i32.add
+                local.set $l4
+                br 0 (;@6;)
+              end
+            end
+            local.get $p1
+            i64.const 2678977294
+            local.get $l2
+            i32.const 16
+            i32.add
+            i32.const 2
+            call $_ZN74_$LT$soroban_sdk..env..Env$u20$as$u20$soroban_env_common..env..EnvBase$GT$18vec_new_from_slice17hb389c0723dfe99baE
+            call $_ZN17soroban_env_guest5guest4call4call17hea10fef78e35f49cE
+            i64.const 255
+            i64.and
+            i64.const 2
+            i64.ne
+            br_if 2 (;@2;)
+            local.get $l2
+            i32.const 32
+            i32.add
+            global.set $__stack_pointer
+            return
+          end
+          local.get $l2
+          i32.const 16
+          i32.add
+          local.get $l4
+          i32.add
+          i64.const 2
+          i64.store
+          local.get $l4
+          i32.const 8
+          i32.add
+          local.set $l4
+          br 0 (;@3;)
+        end
+      end
+      i32.const 1049552
+      local.get $l2
+      i32.const 16
+      i32.add
+      i32.const 1049596
+      call $_ZN4core6result13unwrap_failed17h4ed86702351a3017E
+      unreachable
     end
     i64.const 17179869187
     call $_ZN70_$LT$soroban_sdk..env..Env$u20$as$u20$soroban_env_common..env..Env$GT$15fail_with_error17hc429e9b63bee7c24E
     unreachable
+    unreachable)
+  (func $_ZN4core6result13unwrap_failed17h4ed86702351a3017E (type $t9) (param $p0 i32) (param $p1 i32) (param $p2 i32)
+    call $_ZN4core9panicking9panic_fmt17h5c7ce52813e94bcdE
     unreachable)
   (func $_ZN23reflector_subscriptions3now17hb1237a9ac96f808eE (type $t6) (result i64)
     (local $l0 i32) (local $l1 i64) (local $l2 i32)
@@ -2125,72 +2119,104 @@
   (func $_ZN23reflector_subscriptions13spec_entrypt317h5ea850bd897e801fE (type $t17) (param $p0 i64)
     (local $l1 i32) (local $l2 i64) (local $l3 i32)
     global.get $__stack_pointer
-    i32.const 160
+    i32.const 80
     i32.sub
     local.tee $l1
     global.set $__stack_pointer
+    local.get $p0
     call $_ZN3cvt14CVT_nondet_u6417h77a160275bea6d9cE
-    local.set $l2
+    local.tee $l2
+    call $_ZN23reflector_subscriptions20SubscriptionContract6charge17hb749fff9d5dd0b47E
     local.get $l1
-    i32.const 80
-    i32.add
     local.get $p0
     call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$16get_subscription17hd7a4dbcc6719d062E
     block  ;; label = @1
       local.get $l1
-      i32.load8_u offset=152
-      i32.const 2
-      i32.eq
-      br_if 0 (;@1;)
-      block  ;; label = @2
-        local.get $l1
-        local.get $l1
-        i32.const 80
-        i32.add
-        i32.const 80
-        call $memcpy
-        local.tee $l1
-        i64.load offset=48
-        local.get $l2
-        i64.ge_u
-        br_if 0 (;@2;)
-        local.get $l1
-        i32.const 1
-        i32.store8 offset=72
-      end
-      local.get $p0
-      local.get $l1
-      call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$16set_subscription17h5c9e7341f7aa60f9E
-      local.get $l1
-      i32.const 80
-      i32.add
-      local.get $p0
-      call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$16get_subscription17hd7a4dbcc6719d062E
-      local.get $l1
-      i32.load8_u offset=152
+      i32.load8_u offset=72
       local.tee $l3
       i32.const 2
-      i32.eq
-      br_if 0 (;@1;)
-      local.get $l1
-      i64.load offset=128
-      local.get $l2
-      i64.ge_u
-      local.get $l3
-      i32.const 0
       i32.ne
-      i32.or
-      call $_ZN3cvt10CVT_assert17h5a1968eaab7012aeE
-      local.get $l1
+      br_if 0 (;@1;)
+      call $_ZN4core6option13unwrap_failed17h0d060778de0f79e8E
+      unreachable
+    end
+    local.get $l1
+    i64.load offset=48
+    local.get $l2
+    i64.ge_u
+    local.get $l3
+    i32.const 0
+    i32.ne
+    i32.or
+    call $_ZN3cvt10CVT_assert17h5a1968eaab7012aeE
+    local.get $l1
+    i32.const 80
+    i32.add
+    global.set $__stack_pointer)
+  (func $_ZN3cvt14CVT_nondet_u6417h77a160275bea6d9cE (type $t6) (result i64)
+    call $CVT_nondet_u64_c)
+  (func $_ZN23reflector_subscriptions20SubscriptionContract6charge17hb749fff9d5dd0b47E (type $t24) (param $p0 i64) (param $p1 i64)
+    (local $l2 i32) (local $l3 i64) (local $l4 i64)
+    global.get $__stack_pointer
+    i32.const 160
+    i32.sub
+    local.tee $l2
+    global.set $__stack_pointer
+    call $_ZN23reflector_subscriptions3now17hb1237a9ac96f808eE
+    local.set $l3
+    local.get $l2
+    local.get $p0
+    call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$16get_subscription17hd7a4dbcc6719d062E
+    block  ;; label = @1
+      block  ;; label = @2
+        local.get $l2
+        i32.load8_u offset=72
+        i32.const 2
+        i32.eq
+        br_if 0 (;@2;)
+        local.get $l2
+        i32.const 80
+        i32.add
+        local.get $l2
+        i32.const 80
+        call $memcpy
+        drop
+        local.get $l3
+        local.get $l2
+        i64.load offset=136
+        local.tee $l4
+        i64.lt_u
+        br_if 1 (;@1;)
+        local.get $l3
+        local.get $l4
+        i64.sub
+        i64.const 86400000
+        i64.lt_u
+        br_if 0 (;@2;)
+        block  ;; label = @3
+          local.get $l2
+          i64.load offset=128
+          local.get $p1
+          i64.ge_u
+          br_if 0 (;@3;)
+          local.get $l2
+          i32.const 1
+          i32.store8 offset=152
+        end
+        local.get $p0
+        local.get $l2
+        i32.const 80
+        i32.add
+        call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$16set_subscription17h5c9e7341f7aa60f9E
+      end
+      local.get $l2
       i32.const 160
       i32.add
       global.set $__stack_pointer
       return
     end
-    call $_ZN4core6option13unwrap_failed17h0d060778de0f79e8E
+    call $_ZN4core9panicking11panic_const23panic_const_div_by_zero17h22ae5ed81ae7585cE
     unreachable)
-  (func $_ZN3cvt14CVT_nondet_u6417h77a160275bea6d9cE (type $t6) (result i64)
-    call $CVT_nondet_u64_c)
   (func $_ZN3cvt10CVT_assert17h5a1968eaab7012aeE (type $t7) (param $p0 i32)
     local.get $p0
     call $CVT_assert_c)
@@ -2474,137 +2500,45 @@
     local.get $p0
     local.get $l2
     i64.store)
-  (func $charge (type $t2) (param $p0 i64) (result i64)
-    (local $l1 i32) (local $l2 i64) (local $l3 i64) (local $l4 i64)
+  (func $charge (type $t3) (param $p0 i64) (param $p1 i64) (result i64)
+    (local $l2 i32)
     global.get $__stack_pointer
-    i32.const 192
+    i32.const 32
     i32.sub
-    local.tee $l1
+    local.tee $l2
     global.set $__stack_pointer
-    local.get $l1
+    local.get $l2
     i32.const 16
     i32.add
     local.get $p0
     call $_ZN103_$LT$u64$u20$as$u20$soroban_env_common..convert..TryFromVal$LT$E$C$soroban_env_common..val..Val$GT$$GT$12try_from_val17he804f4f64cf7a3d6E
     block  ;; label = @1
-      block  ;; label = @2
-        local.get $l1
-        i32.load offset=16
-        br_if 0 (;@2;)
-        local.get $l1
-        i64.load offset=24
-        local.set $p0
-        call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$18panic_if_not_admin17hbfcf56a317a400e1E
-        call $_ZN23reflector_subscriptions3now17hb1237a9ac96f808eE
-        local.set $l2
-        local.get $l1
-        i32.const 32
-        i32.add
-        local.get $p0
-        call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$16get_subscription17hd7a4dbcc6719d062E
-        block  ;; label = @3
-          local.get $l1
-          i32.load8_u offset=104
-          i32.const 2
-          i32.eq
-          br_if 0 (;@3;)
-          local.get $l1
-          i32.const 112
-          i32.add
-          local.get $l1
-          i32.const 32
-          i32.add
-          i32.const 80
-          call $memcpy
-          drop
-          local.get $l2
-          local.get $l1
-          i64.load offset=168
-          local.tee $l3
-          i64.lt_u
-          br_if 2 (;@1;)
-          local.get $l2
-          local.get $l3
-          i64.sub
-          local.tee $l3
-          i64.const 86400000
-          i64.lt_u
-          br_if 0 (;@3;)
-          local.get $l1
-          local.get $l3
-          i64.const 86400000
-          i64.div_u
-          i64.const 0
-          call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$7get_fee17h1b5c52c5e4f7e56aE
-          local.get $l1
-          i64.load offset=128
-          local.get $l1
-          i64.load offset=144
-          local.get $l1
-          i32.load offset=180
-          call $_ZN23reflector_subscriptions8calc_fee17hd1e30741a87aa882E
-          local.tee $l4
-          i64.const 0
-          call $__multi3
-          local.get $l1
-          i64.load offset=8
-          i64.eqz
-          i32.eqz
-          br_if 2 (;@1;)
-          local.get $l1
-          i64.load
-          local.set $l3
-          local.get $l1
-          local.get $l2
-          i64.store offset=168
-          local.get $l1
-          local.get $l1
-          i64.load offset=160
-          local.tee $l2
-          local.get $l2
-          local.get $l3
-          local.get $l2
-          local.get $l3
-          i64.lt_u
-          select
-          local.tee $l2
-          i64.sub
-          local.tee $l3
-          i64.store offset=160
-          block  ;; label = @4
-            local.get $l3
-            local.get $l4
-            i64.ge_u
-            br_if 0 (;@4;)
-            local.get $l1
-            i32.const 1
-            i32.store8 offset=184
-          end
-          local.get $p0
-          local.get $l1
-          i32.const 112
-          i32.add
-          call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$16set_subscription17h5c9e7341f7aa60f9E
-          local.get $l2
-          i64.eqz
-          br_if 0 (;@3;)
-          call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$9get_token17hee245acc3c635e5cE
-          call $_ZN17soroban_env_guest5guest7context28get_current_contract_address17h3819835f93991fffE
-          local.get $l2
-          i64.const 0
-          call $_ZN23reflector_subscriptions7certora5token18CertoraTokenClient4burn17h5f5f52a5158ee107E
-        end
-        local.get $l1
-        i32.const 192
-        i32.add
-        global.set $__stack_pointer
-        i64.const 2
-        return
-      end
-      unreachable
-      unreachable
+      local.get $l2
+      i64.load offset=16
+      i32.wrap_i64
+      br_if 0 (;@1;)
+      local.get $l2
+      i64.load offset=24
+      local.set $p0
+      local.get $l2
+      local.get $p1
+      call $_ZN103_$LT$u64$u20$as$u20$soroban_env_common..convert..TryFromVal$LT$E$C$soroban_env_common..val..Val$GT$$GT$12try_from_val17he804f4f64cf7a3d6E
+      local.get $l2
+      i64.load
+      i32.wrap_i64
+      br_if 0 (;@1;)
+      local.get $p0
+      local.get $l2
+      i64.load offset=8
+      call $_ZN23reflector_subscriptions20SubscriptionContract6charge17hb749fff9d5dd0b47E
+      local.get $l2
+      i32.const 32
+      i32.add
+      global.set $__stack_pointer
+      i64.const 2
+      return
     end
-    call $_ZN4core9panicking11panic_const23panic_const_div_by_zero17h22ae5ed81ae7585cE
+    unreachable
     unreachable)
   (func $update_contract (type $t2) (param $p0 i64) (result i64)
     (local $l1 i32)
@@ -3591,7 +3525,7 @@
     i32.const 1048576
     call $_ZN4core6result13unwrap_failed17h4ed86702351a3017E
     unreachable)
-  (func $_ZN4core9panicking18panic_bounds_check17h24953fa031ee3e13E (type $t26) (param $p0 i32) (param $p1 i32)
+  (func $_ZN4core9panicking18panic_bounds_check17h24953fa031ee3e13E (type $t25) (param $p0 i32) (param $p1 i32)
     call $_ZN4core9panicking9panic_fmt17h5c7ce52813e94bcdE
     unreachable)
   (func $fee (type $t6) (result i64)
@@ -3601,7 +3535,7 @@
   (func $token (type $t6) (result i64)
     call $_ZN23reflector_subscriptions24panic_if_not_initialized17h8ed65e5ef55252dbE
     call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$9get_token17hee245acc3c635e5cE)
-  (func $_ZN4core3fmt3num3imp7fmt_u6417haef35ab823acabf1E (type $t27) (param $p0 i64) (param $p1 i32) (param $p2 i32) (result i32)
+  (func $_ZN4core3fmt3num3imp7fmt_u6417haef35ab823acabf1E (type $t26) (param $p0 i64) (param $p1 i32) (param $p2 i32) (result i32)
     (local $l3 i32) (local $l4 i32) (local $l5 i64) (local $l6 i32) (local $l7 i32) (local $l8 i32)
     global.get $__stack_pointer
     i32.const 48
@@ -3773,7 +3707,7 @@
     i32.add
     global.set $__stack_pointer
     local.get $l4)
-  (func $_ZN4core3fmt9Formatter12pad_integral17hcbbcc5e70706fcddE (type $t28) (param $p0 i32) (param $p1 i32) (param $p2 i32) (param $p3 i32) (param $p4 i32) (param $p5 i32) (result i32)
+  (func $_ZN4core3fmt9Formatter12pad_integral17hcbbcc5e70706fcddE (type $t27) (param $p0 i32) (param $p1 i32) (param $p2 i32) (param $p3 i32) (param $p4 i32) (param $p5 i32) (result i32)
     (local $l6 i32) (local $l7 i32) (local $l8 i32) (local $l9 i32) (local $l10 i32) (local $l11 i32) (local $l12 i32)
     block  ;; label = @1
       block  ;; label = @2
@@ -4098,7 +4032,7 @@
       return
     end
     local.get $p1)
-  (func $_ZN4core3fmt9Formatter12pad_integral12write_prefix17h45be8b7045bf0ef1E (type $t29) (param $p0 i32) (param $p1 i32) (param $p2 i32) (param $p3 i32) (param $p4 i32) (result i32)
+  (func $_ZN4core3fmt9Formatter12pad_integral12write_prefix17h45be8b7045bf0ef1E (type $t28) (param $p0 i32) (param $p1 i32) (param $p2 i32) (param $p3 i32) (param $p4 i32) (result i32)
     (local $l5 i32)
     block  ;; label = @1
       block  ;; label = @2
@@ -4942,7 +4876,7 @@
       local.set $l4
     end
     local.get $l4)
-  (func $_ZN4core9panicking5panic17h3b99507adb69386aE (type $t26) (param $p0 i32) (param $p1 i32)
+  (func $_ZN4core9panicking5panic17h3b99507adb69386aE (type $t25) (param $p0 i32) (param $p1 i32)
     call $_ZN4core9panicking9panic_fmt17h5c7ce52813e94bcdE
     unreachable)
   (func $_ZN4core3fmt5write17hbee61cd3fb7b52a3E (type $t0) (param $p0 i32) (param $p1 i32) (param $p2 i32) (result i32)
@@ -5643,7 +5577,7 @@
     i32.add
     global.set $__stack_pointer
     local.get $p1)
-  (func $_ZN11stellar_xdr4curr9generated11ScErrorType4name17h0750492dddbeb439E (type $t26) (param $p0 i32) (param $p1 i32)
+  (func $_ZN11stellar_xdr4curr9generated11ScErrorType4name17h0750492dddbeb439E (type $t25) (param $p0 i32) (param $p1 i32)
     local.get $p0
     local.get $p1
     i32.const 2
@@ -5659,7 +5593,7 @@
     i32.add
     i32.load
     i32.store)
-  (func $_ZN11stellar_xdr4curr9generated11ScErrorCode4name17h555636cca6bee013E (type $t26) (param $p0 i32) (param $p1 i32)
+  (func $_ZN11stellar_xdr4curr9generated11ScErrorCode4name17h555636cca6bee013E (type $t25) (param $p0 i32) (param $p1 i32)
     local.get $p0
     local.get $p1
     i32.const 2
@@ -5697,7 +5631,7 @@
     i32.load offset=12
     call_indirect $T0 (type $t0))
   (func $_ZN4core3ptr53drop_in_place$LT$soroban_env_common..error..Error$GT$17hc42fd58725fd1251E (type $t7) (param $p0 i32))
-  (func $__multi3 (type $t30) (param $p0 i32) (param $p1 i64) (param $p2 i64) (param $p3 i64) (param $p4 i64)
+  (func $__multi3 (type $t29) (param $p0 i32) (param $p1 i64) (param $p2 i64) (param $p3 i64) (param $p4 i64)
     (local $l5 i64) (local $l6 i64) (local $l7 i64) (local $l8 i64) (local $l9 i64) (local $l10 i64)
     local.get $p0
     local.get $p3
@@ -5759,7 +5693,7 @@
     i64.add
     i64.add
     i64.store offset=8)
-  (func $__ashlti3 (type $t31) (param $p0 i32) (param $p1 i64) (param $p2 i64) (param $p3 i32)
+  (func $__ashlti3 (type $t30) (param $p0 i32) (param $p1 i64) (param $p2 i64) (param $p3 i32)
     (local $l4 i64)
     block  ;; label = @1
       block  ;; label = @2
@@ -5994,7 +5928,7 @@
     local.get $p1
     local.get $p2
     call $_ZN17compiler_builtins3mem6memcpy17he2d289fa2eb42ef2E)
-  (func $_ZN17compiler_builtins3int19specialized_div_rem12u128_div_rem17h114d25154a1f3f22E (type $t30) (param $p0 i32) (param $p1 i64) (param $p2 i64) (param $p3 i64) (param $p4 i64)
+  (func $_ZN17compiler_builtins3int19specialized_div_rem12u128_div_rem17h114d25154a1f3f22E (type $t29) (param $p0 i32) (param $p1 i64) (param $p2 i64) (param $p3 i64) (param $p4 i64)
     (local $l5 i32) (local $l6 i64) (local $l7 i32) (local $l8 i64) (local $l9 i64) (local $l10 i64) (local $l11 i64) (local $l12 i64)
     global.get $__stack_pointer
     i32.const 32
@@ -6442,7 +6376,7 @@
     i32.const 32
     i32.add
     global.set $__stack_pointer)
-  (func $__udivti3 (type $t30) (param $p0 i32) (param $p1 i64) (param $p2 i64) (param $p3 i64) (param $p4 i64)
+  (func $__udivti3 (type $t29) (param $p0 i32) (param $p1 i64) (param $p2 i64) (param $p3 i64) (param $p4 i64)
     (local $l5 i32)
     global.get $__stack_pointer
     i32.const 32

@@ -5,9 +5,10 @@ use nondet::Nondet;
 use soroban_sdk::storage::{Instance, Persistent};
 use soroban_sdk::{panic_with_error, Address, Env, String};
 
+use crate::types::subscription::Subscription;
 use crate::{types};
 
-use types::{error::Error, subscription::Subscription};
+use types::{error::Error};
 const ADMIN_KEY: &str = "admin";
 const BASE_FEE: &str = "base_fee";
 const LAST_SUBSCRIPTION_ID: &str = "last";
@@ -30,11 +31,11 @@ impl Nondet for CertoraStorage {
 
 pub static mut STORAGE: Option<CertoraStorage> = None;
 
-pub(crate) fn init_persistent_storage() {
-    unsafe {
-        STORAGE = Some(CertoraStorage::nondet());
-    }
-}
+// pub(crate) fn init_persistent_storage() {
+//     unsafe {
+//         STORAGE = Some(CertoraStorage::nondet());
+//     }
+// }
 
 pub trait EnvExtensions {
     fn get_admin(&self) -> Option<Address>;
@@ -108,7 +109,6 @@ impl EnvExtensions for Env {
 
     fn get_subscription(&self, subscription_id: u64) -> Option<Subscription> {
         get_persistent_storage(&self).get(&subscription_id)
-        // unsafe { Some(STORAGE.clone().unwrap().sub) }
     }
 
     fn set_subscription(&self, subscription_id: u64, subscription: &Subscription) {

@@ -5,7 +5,7 @@ mod extensions;
 mod types;
 
 use extensions::{
-    env_extensions::{init_persistent_storage, EnvExtensions, STORAGE},
+    env_extensions::{EnvExtensions},
     u128_extensions::U128Extensions,
 };
 use nondet::*;
@@ -14,11 +14,8 @@ use soroban_sdk::{
 };
 
 use types::{
-    contract_config::ContractConfig,
-    error::Error,
-    subscription::{self, Subscription},
-    subscription_init_params::SubscriptionInitParams,
-    subscription_status::SubscriptionStatus,
+    contract_config::ContractConfig, error::Error, subscription::{self, Subscription},
+    subscription_init_params::SubscriptionInitParams, subscription_status::SubscriptionStatus,
     ticker_asset::TickerAsset,
 };
 
@@ -109,29 +106,30 @@ impl SubscriptionContract {
     // # Panics
     //
     // Panics if the caller doesn't match admin address
-    pub fn charge(e: Env, subscription_id: u64) {
-        e.panic_if_not_admin();
-        let mut total_charge: u64 = 0;
+    pub fn charge(e: Env, subscription_id: u64, fee: u64) {
+        // e.panic_if_not_admin();
+        // let mut total_charge: u64 = 0;
         let now = now(&e);
         // for subscription_id in subscription_ids.iter() {
         if let Some(mut subscription) = e.get_subscription(subscription_id) {
             // We can charge fees for several days in case if there was an interruption in background worker charge process
             let days_charged = (now - subscription.updated) / DAY;
             if days_charged != 0 {
-                let fee = calc_fee(
-                    e.get_fee(),
-                    &subscription.base,
-                    &subscription.quote,
-                    subscription.heartbeat,
-                );
-                let mut charge = days_charged * fee;
+                // continue;
+                // let fee: u64 = calc_fee(
+                //     e.get_fee(),
+                //     &subscription.base,
+                //     &subscription.quote,
+                //     subscription.heartbeat,
+                // );
+                // let mut charge = days_charged * fee;
                 // Do not charge more than left on the subscription balance
-                if subscription.balance < charge {
-                    charge = subscription.balance;
-                }
+                // if subscription.balance < charge {
+                    // charge = subscription.balance;
+                // }
                 // Deduct calculated retention fees
-                subscription.balance -= charge;
-                subscription.updated = now;
+                // subscription.balance -= charge;
+                // subscription.updated = now;
                 // Publish charged event
                 // e.events().publish(
                 //     (
@@ -148,7 +146,7 @@ impl SubscriptionContract {
                     // e.events().publish(
                     //     (
                     //         REFLECTOR,
-                    //         symbol_short!("suspended"),
+                    //         symbol_short!("suspended"),yeah i
                     //         subscription.owner.clone(),
                     //     ),
                     //     (subscription_id, now),
@@ -157,14 +155,14 @@ impl SubscriptionContract {
                 // Update subscription properties
                 e.set_subscription(subscription_id, &subscription);
                 // Sum all retention fee charges
-                total_charge += charge;
-            }
-            // }
-            // Burn tokens charged from all subscriptions
-            if total_charge > 0 {
-                get_token_client(&e).burn(&e.current_contract_address(), &(total_charge as i128));
+                // total_charge += charge;
             }
         }
+        // }
+        // Burn tokens charged from all subscriptions
+        // if total_charge > 0 {
+            // get_token_client(&e).burn(&e.current_contract_address(), &(total_charge as i128));
+        // }
     }
 
     // Update the contract source code
@@ -499,6 +497,7 @@ pub fn calc_fee(
     quote_symbol: &TickerAsset,
     heartbeat: u32,
 ) -> u64 {
+
     let heartbeat_fee = calc_hearbeat_fee(base_fee, heartbeat);
     let complexity_factor = calc_complexity_factor(base_symbol, quote_symbol);
     heartbeat_fee * complexity_factor
@@ -596,17 +595,32 @@ fn spec_entrypt(env: soroban_sdk::Env, fee: u64, amount: u64) {
 }
 
 #[inline(never)]
-fn spec_entrypt3(env: Env, subscription_id: u64) {
+fn spec_entrypt3(e: Env, subscription_id: u64) {
+
     let fee = u64::nondet();
-    let mut subscription = env.get_subscription(subscription_id).unwrap();
-    if subscription.balance < fee {
-        subscription.status = SubscriptionStatus::Suspended;
-    }
-    env.set_subscription(subscription_id, &subscription);
-    let subscription = env.get_subscription(subscription_id).unwrap();
-    cvt::assert!(
-        subscription.balance >= fee || (subscription.status == SubscriptionStatus::Suspended)
-    );
+    SubscriptionContract::charge(e.clone(), subscription_id, fee);
+    let subscription = e.get_subscription(subscription_id).unwrap();
+
+    // let mut subscription = e.get_subscription(subscription_id).unwrap();
+
+    // if subscription.balance < fee {
+    //     subscription.status = SubscriptionStatus::Suspended;
+    // }
+
+    // e.set_subscription(subscription_id, &subscription);
+
+    // cvt::assert!(false);
+    cvt::assert!(subscription.balance >= fee || (subscription.status == SubscriptionStatus::Suspended));
+}
+
+#[inline(never)]
+fn spec_entrypt4(e: Env) {
+    let config = ContractConfig::nondet();
+    SubscriptionContract::config(e.clone(), config.clone());
+    cvt::assert!(false);
+    SubscriptionContract::config(e, config);
+
+
 }
 
 #[export_name = "sunbeam_entrypt"]
