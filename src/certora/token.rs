@@ -312,7 +312,7 @@ impl<'a> CertoraTokenClient<'a> {
     pub fn transfer(&self, from: &Address, to: &Address, amount: &i128) -> () {
         from.require_auth();
         check_nonnegative_amount(*amount);
-
+        // todo
         // spend_balance(from.clone(), *amount);
         // receive_balance(to.clone(), *amount);
 
@@ -396,21 +396,9 @@ impl<'a> CertoraTokenClient<'a> {
         res
     }
     pub fn burn(&self, from: &Address, amount: &i128) -> () {
-        use core::ops::Not;
-        use soroban_sdk::{FromVal, IntoVal};
-        let res = self.env.invoke_contract(
-            &self.address,
-            &{
-                #[allow(deprecated)]
-                const SYMBOL: soroban_sdk::Symbol = soroban_sdk::Symbol::short("burn");
-                SYMBOL
-            },
-            ::soroban_sdk::Vec::from_array(
-                &self.env,
-                [from.into_val(&self.env), amount.into_val(&self.env)],
-            ),
-        );
-        res
+        from.require_auth();
+        check_nonnegative_amount(*amount);
+        // todo
     }
     pub fn try_burn(
         &self,

@@ -17,6 +17,7 @@ build-llvm:
 
 clean:
     cargo clean
+    rm reflector_subscriptions.wat
 
 update:
     cargo update -p nondet
