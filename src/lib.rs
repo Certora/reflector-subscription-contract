@@ -3,10 +3,17 @@
 mod extensions;
 mod types;
 
+mod certora;
+
 use extensions::{env_extensions::EnvExtensions, u128_extensions::U128Extensions};
 use soroban_sdk::{
-    contract, contractimpl, panic_with_error, symbol_short, token::TokenClient, Address, BytesN, Env, Symbol, Vec,
+    contract, contractimpl, panic_with_error, symbol_short,
+    Address, BytesN, Env, Symbol, Vec,
 };
+#[cfg(feature = "cvt")]
+use certora::token::TokenClient;
+#[cfg(not(feature = "cvt"))]
+use soroban_sdk::token::TokenClient;
 use types::{
     contract_config::ContractConfig, error::Error, subscription::Subscription,
     subscription_init_params::SubscriptionInitParams, subscription_status::SubscriptionStatus, ticker_asset::TickerAsset,
@@ -328,8 +335,11 @@ impl SubscriptionContract {
         // Remove subscription from the state
         e.remove_subscription(subscription_id);
         // Publish subscription cancelled event
-        e.events()
-            .publish((REFLECTOR, symbol_short!("cancelled"), subscription.owner), subscription_id);
+        #[cfg(not(feature = "cvt"))]
+        {
+            e.events()
+             .publish((REFLECTOR, symbol_short!("cancelled"), subscription.owner), subscription_id);
+        }
     }
 
     // Get subscription by ID

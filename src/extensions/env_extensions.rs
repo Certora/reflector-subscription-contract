@@ -79,6 +79,7 @@ impl EnvExtensions for Env {
         get_instance_storage(&self).set(&LAST_SUBSCRIPTION_ID, &last_subscription_id);
     }
 
+    #[inline(never)]
     fn get_subscription(&self, subscription_id: u64) -> Option<Subscription> {
         get_persistent_storage(&self).get(&subscription_id)
     }
@@ -108,6 +109,7 @@ fn get_instance_storage(e: &Env) -> Instance {
     e.storage().instance()
 }
 
+#[inline(never)]
 fn get_persistent_storage(e: &Env) -> Persistent {
     e.storage().persistent()
 }
