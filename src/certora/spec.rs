@@ -1,14 +1,6 @@
 use crate::{extensions::env_extensions::EnvExtensions, types::subscription_status::SubscriptionStatus, SubscriptionContract};
 use soroban_sdk::{contracttype, Address, Env};
-
-// These need to be moved to cvt crate
-extern "C" {
-    fn CVT_SOROBAN_is_auth(address: u64) -> u64;
-}
-
-fn is_auth(address: Address) -> bool {
-    unsafe { CVT_SOROBAN_is_auth(address.to_val().get_payload()) != 0 }
-}
+use cvt_soroban::is_auth;
 
 #[inline(never)]
 #[no_mangle]
