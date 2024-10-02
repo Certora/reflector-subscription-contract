@@ -4,13 +4,26 @@ use cvt_soroban::is_auth;
 
 #[inline(never)]
 #[no_mangle]
+pub fn cancel_sanity(
+    env: Env,
+    subscription_id: u64
+) {
+    SubscriptionContract::cancel(env.clone(), subscription_id);
+    cvt::assert!(false);
+}
+
+#[inline(never)]
+#[no_mangle]
 pub fn cancel_non_owner(
     env: Env,
     subscription_id: u64
 ) {
-    let subscription = env.get_subscription(subscription_id).unwrap();
-    cvt::require!(!is_auth(subscription.owner), "owner not authorized");
+    let subscription_auth = env.get_subscription(subscription_id).map_or(false, |s| is_auth(s.owner));
+
+    cvt::require!(!subscription_auth, "subscription owner not authorized");
     SubscriptionContract::cancel(env.clone(), subscription_id);
+
+    // If the owner is not authorized, then cancel aborts
     cvt::assert!(false);
 }
 
@@ -20,9 +33,14 @@ pub fn cancel_inactive(
     env: Env,
     subscription_id: u64
 ) {
-    let subscription = env.get_subscription(subscription_id).unwrap();
-    cvt::require!(subscription.status == SubscriptionStatus::Suspended, "subscription suspended");
+    let subscription_active = env
+        .get_subscription(subscription_id)
+        .map_or(false, |s| s.status == SubscriptionStatus::Active);
+
+    cvt::require!( !subscription_active, "subscription not active" );
     SubscriptionContract::cancel(env.clone(), subscription_id);
+
+    // If the subscription is not active, then cancel aborts
     cvt::assert!(false);
 }
 
