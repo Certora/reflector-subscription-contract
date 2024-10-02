@@ -42,6 +42,7 @@
   (import "x" "4" (func $_ZN17soroban_env_guest5guest7context20get_ledger_timestamp17h0f3bee5a4ced74c4E (type $t5)))
   (import "x" "3" (func $_ZN17soroban_env_guest5guest7context19get_ledger_sequence17h51f98c2ba0fbfe59E (type $t5)))
   (import "x" "8" (func $_ZN17soroban_env_guest5guest7context25get_max_live_until_ledger17h6c65abc6adf353a2E (type $t5)))
+  (import "d" "_" (func $_ZN17soroban_env_guest5guest4call4call17hea10fef78e35f49cE (type $t4)))
   (import "x" "1" (func $_ZN17soroban_env_guest5guest7context14contract_event17h9a7ad97c29f0839bE (type $t3)))
   (import "l" "6" (func $_ZN17soroban_env_guest5guest6ledger28update_current_contract_wasm17haa230b12d7efdbb0E (type $t2)))
   (import "b" "8" (func $_ZN17soroban_env_guest5guest3buf9bytes_len17hfe074fe1259c9d6dE (type $t2)))
@@ -1509,6 +1510,29 @@
   (func $_ZN4core9panicking11panic_const23panic_const_div_by_zero17h22ae5ed81ae7585cE (type $t17)
     call $_ZN4core9panicking9panic_fmt17h5c7ce52813e94bcdE
     unreachable)
+  (func $_ZN104_$LT$reflector_subscriptions..types..contract_config..ContractConfig$u20$as$u20$nondet..core..Nondet$GT$6nondet17hf27028a7a4ff0793E (type $t6) (param $p0 i32)
+    (local $l1 i64) (local $l2 i64)
+    call $_ZN6nondet7soroban80_$LT$impl$u20$nondet..core..Nondet$u20$for$u20$soroban_sdk..address..Address$GT$6nondet17hd56112a4a4a38fcfE
+    local.set $l1
+    call $_ZN6nondet7soroban80_$LT$impl$u20$nondet..core..Nondet$u20$for$u20$soroban_sdk..address..Address$GT$6nondet17hd56112a4a4a38fcfE
+    local.set $l2
+    local.get $p0
+    call $_ZN3cvt14CVT_nondet_u6417h77a160275bea6d9cE
+    i64.store offset=16
+    local.get $p0
+    local.get $l2
+    i64.store offset=8
+    local.get $p0
+    local.get $l1
+    i64.store)
+  (func $_ZN6nondet7soroban80_$LT$impl$u20$nondet..core..Nondet$u20$for$u20$soroban_sdk..address..Address$GT$6nondet17hd56112a4a4a38fcfE (type $t5) (result i64)
+    call $_ZN3cvt14CVT_nondet_u6417h77a160275bea6d9cE
+    i64.const 8
+    i64.shl
+    i64.const 77
+    i64.or)
+  (func $_ZN3cvt14CVT_nondet_u6417h77a160275bea6d9cE (type $t5) (result i64)
+    call $CVT_nondet_u64_c)
   (func $_ZN23reflector_subscriptions8calc_fee17hd1e30741a87aa882E (type $t22) (param $p0 i64) (param $p1 i64) (param $p2 i64) (param $p3 i32) (result i64)
     (local $l4 i32)
     global.get $__stack_pointer
@@ -1768,7 +1792,7 @@
         local.get $l0
         i32.const 24
         i32.add
-        i32.const 1049596
+        i32.const 1049612
         call $_ZN4core6result13unwrap_failed17h4ed86702351a3017E
         unreachable
       end
@@ -1968,6 +1992,7 @@
     i32.sub
     local.tee $l4
     global.set $__stack_pointer
+    call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$18panic_if_not_admin17hbfcf56a317a400e1E
     local.get $l4
     i32.const 16
     i32.add
@@ -2477,58 +2502,37 @@
     i32.const 80
     i32.add
     global.set $__stack_pointer)
-  (func $sunbeam_config_only_once (type $t17)
-    (local $l0 i32) (local $l1 i64) (local $l2 i64) (local $l3 i64)
+  (func $sunbeam_config_only_once_a (type $t17)
+    (local $l0 i32)
     global.get $__stack_pointer
-    i32.const 32
+    i32.const 48
     i32.sub
     local.tee $l0
     global.set $__stack_pointer
-    call $_ZN6nondet7soroban80_$LT$impl$u20$nondet..core..Nondet$u20$for$u20$soroban_sdk..address..Address$GT$6nondet17hd56112a4a4a38fcfE
-    local.set $l1
-    call $_ZN6nondet7soroban80_$LT$impl$u20$nondet..core..Nondet$u20$for$u20$soroban_sdk..address..Address$GT$6nondet17hd56112a4a4a38fcfE
-    local.set $l2
     local.get $l0
-    call $_ZN3cvt14CVT_nondet_u6417h77a160275bea6d9cE
-    local.tee $l3
+    call $_ZN104_$LT$reflector_subscriptions..types..contract_config..ContractConfig$u20$as$u20$nondet..core..Nondet$GT$6nondet17hf27028a7a4ff0793E
+    local.get $l0
+    local.get $l0
+    i64.load offset=16
+    i64.store offset=40
+    local.get $l0
+    local.get $l0
+    i64.load offset=8
+    i64.store offset=32
+    local.get $l0
+    local.get $l0
+    i64.load
     i64.store offset=24
     local.get $l0
-    local.get $l2
-    i64.store offset=16
-    local.get $l0
-    local.get $l1
-    i64.store offset=8
-    local.get $l0
-    i32.const 8
+    i32.const 24
     i32.add
     call $_ZN23reflector_subscriptions20SubscriptionContract6config17h541d8d5918b45586E
-    i32.const 0
+    call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$14is_initialized17hc79e2cc294a64020E
     call $_ZN3cvt10CVT_assert17h5a1968eaab7012aeE
     local.get $l0
-    local.get $l3
-    i64.store offset=24
-    local.get $l0
-    local.get $l2
-    i64.store offset=16
-    local.get $l0
-    local.get $l1
-    i64.store offset=8
-    local.get $l0
-    i32.const 8
-    i32.add
-    call $_ZN23reflector_subscriptions20SubscriptionContract6config17h541d8d5918b45586E
-    local.get $l0
-    i32.const 32
+    i32.const 48
     i32.add
     global.set $__stack_pointer)
-  (func $_ZN6nondet7soroban80_$LT$impl$u20$nondet..core..Nondet$u20$for$u20$soroban_sdk..address..Address$GT$6nondet17hd56112a4a4a38fcfE (type $t5) (result i64)
-    call $_ZN3cvt14CVT_nondet_u6417h77a160275bea6d9cE
-    i64.const 8
-    i64.shl
-    i64.const 77
-    i64.or)
-  (func $_ZN3cvt14CVT_nondet_u6417h77a160275bea6d9cE (type $t5) (result i64)
-    call $CVT_nondet_u64_c)
   (func $_ZN23reflector_subscriptions20SubscriptionContract6config17h541d8d5918b45586E (type $t6) (param $p0 i32)
     (local $l1 i64)
     local.get $p0
@@ -2558,6 +2562,149 @@
     call $_ZN70_$LT$soroban_sdk..env..Env$u20$as$u20$soroban_env_common..env..Env$GT$15fail_with_error17hc429e9b63bee7c24E
     unreachable
     unreachable)
+  (func $sunbeam_config_only_once_b (type $t17)
+    (local $l0 i32)
+    global.get $__stack_pointer
+    i32.const 32
+    i32.sub
+    local.tee $l0
+    global.set $__stack_pointer
+    call $_ZN108_$LT$soroban_sdk..env..Env$u20$as$u20$reflector_subscriptions..extensions..env_extensions..EnvExtensions$GT$14is_initialized17hc79e2cc294a64020E
+    call $_ZN3cvt10CVT_assume17ha8559130df99890bE
+    local.get $l0
+    i32.const 8
+    i32.add
+    call $_ZN104_$LT$reflector_subscriptions..types..contract_config..ContractConfig$u20$as$u20$nondet..core..Nondet$GT$6nondet17hf27028a7a4ff0793E
+    local.get $l0
+    i32.const 8
+    i32.add
+    call $_ZN23reflector_subscriptions20SubscriptionContract6config17h541d8d5918b45586E
+    i32.const 0
+    call $_ZN3cvt10CVT_assert17h5a1968eaab7012aeE
+    local.get $l0
+    i32.const 32
+    i32.add
+    global.set $__stack_pointer)
+  (func $sunbeam_test (type $t17)
+    (local $l0 i32)
+    global.get $__stack_pointer
+    i32.const 32
+    i32.sub
+    local.tee $l0
+    global.set $__stack_pointer
+    local.get $l0
+    i32.const 8
+    i32.add
+    call $_ZN104_$LT$reflector_subscriptions..types..contract_config..ContractConfig$u20$as$u20$nondet..core..Nondet$GT$6nondet17hf27028a7a4ff0793E
+    local.get $l0
+    i32.const 8
+    i32.add
+    call $_ZN23reflector_subscriptions20SubscriptionContract6config17h541d8d5918b45586E
+    i32.const 0
+    call $_ZN3cvt10CVT_assert17h5a1968eaab7012aeE
+    local.get $l0
+    i32.const 32
+    i32.add
+    global.set $__stack_pointer)
+  (func $sunbeam_foo (type $t16) (param $p0 i64)
+    (local $l1 i32) (local $l2 i64) (local $l3 i64) (local $l4 i32)
+    global.get $__stack_pointer
+    i32.const 64
+    i32.sub
+    local.tee $l1
+    global.set $__stack_pointer
+    local.get $l1
+    i32.const 8
+    i32.add
+    call $_ZN104_$LT$reflector_subscriptions..types..contract_config..ContractConfig$u20$as$u20$nondet..core..Nondet$GT$6nondet17hf27028a7a4ff0793E
+    local.get $l1
+    i64.load offset=8
+    local.set $l2
+    local.get $l1
+    local.get $l1
+    i64.load offset=24
+    call $_ZN103_$LT$soroban_env_common..val..Val$u20$as$u20$soroban_env_common..convert..TryFromVal$LT$E$C$u64$GT$$GT$12try_from_val17h5b8f0296deff25f8E
+    i64.store offset=48
+    local.get $l1
+    local.get $l2
+    i64.store offset=40
+    local.get $l1
+    local.get $l1
+    i64.load offset=16
+    i64.store offset=56
+    local.get $l1
+    i32.const 1048840
+    i32.const 3
+    local.get $l1
+    i32.const 40
+    i32.add
+    i32.const 3
+    call $_ZN74_$LT$soroban_sdk..env..Env$u20$as$u20$soroban_env_common..env..EnvBase$GT$19map_new_from_slices17hb58b759080242bb8E
+    local.tee $l3
+    i64.store offset=32
+    i64.const 2
+    local.set $l2
+    i32.const 1
+    local.set $l4
+    block  ;; label = @1
+      loop  ;; label = @2
+        local.get $l4
+        i32.eqz
+        br_if 1 (;@1;)
+        local.get $l4
+        i32.const -1
+        i32.add
+        local.set $l4
+        local.get $l3
+        local.set $l2
+        br 0 (;@2;)
+      end
+    end
+    local.get $l1
+    local.get $l2
+    i64.store offset=40
+    block  ;; label = @1
+      local.get $p0
+      i64.const 11221922982926
+      local.get $l1
+      i32.const 40
+      i32.add
+      i32.const 1
+      call $_ZN74_$LT$soroban_sdk..env..Env$u20$as$u20$soroban_env_common..env..EnvBase$GT$18vec_new_from_slice17hb389c0723dfe99baE
+      call $_ZN17soroban_env_guest5guest4call4call17hea10fef78e35f49cE
+      i64.const 255
+      i64.and
+      i64.const 2
+      i64.eq
+      br_if 0 (;@1;)
+      i32.const 1049552
+      local.get $l1
+      i32.const 40
+      i32.add
+      i32.const 1049596
+      call $_ZN4core6result13unwrap_failed17h4ed86702351a3017E
+      unreachable
+    end
+    i32.const 0
+    call $_ZN3cvt10CVT_assert17h5a1968eaab7012aeE
+    local.get $l1
+    i32.const 64
+    i32.add
+    global.set $__stack_pointer)
+  (func $_ZN74_$LT$soroban_sdk..env..Env$u20$as$u20$soroban_env_common..env..EnvBase$GT$18vec_new_from_slice17hb389c0723dfe99baE (type $t10) (param $p0 i32) (param $p1 i32) (result i64)
+    local.get $p0
+    i64.extend_i32_u
+    i64.const 32
+    i64.shl
+    i64.const 4
+    i64.or
+    local.get $p1
+    i64.extend_i32_u
+    i64.const 32
+    i64.shl
+    i64.const 4
+    i64.or
+    call $_ZN17soroban_env_guest5guest3vec26vec_new_from_linear_memory17h4c9eaf3d19911ad4E)
   (func $config (type $t2) (param $p0 i64) (result i64)
     (local $l1 i32) (local $l2 i32) (local $l3 i64) (local $l4 i64)
     global.get $__stack_pointer
@@ -2757,6 +2904,7 @@
           local.get $l2
           i32.const 48
           i32.add
+          i32.const 2
           call $_ZN74_$LT$soroban_sdk..env..Env$u20$as$u20$soroban_env_common..env..EnvBase$GT$18vec_new_from_slice17hb389c0723dfe99baE
           local.set $l4
           local.get $p0
@@ -2772,6 +2920,7 @@
           local.get $l2
           i32.const 48
           i32.add
+          i32.const 2
           call $_ZN74_$LT$soroban_sdk..env..Env$u20$as$u20$soroban_env_common..env..EnvBase$GT$18vec_new_from_slice17hb389c0723dfe99baE
           call $_ZN17soroban_env_guest5guest7context14contract_event17h9a7ad97c29f0839bE
           drop
@@ -2824,15 +2973,6 @@
     local.get $p0
     local.get $l2
     i64.store)
-  (func $_ZN74_$LT$soroban_sdk..env..Env$u20$as$u20$soroban_env_common..env..EnvBase$GT$18vec_new_from_slice17hb389c0723dfe99baE (type $t20) (param $p0 i32) (result i64)
-    local.get $p0
-    i64.extend_i32_u
-    i64.const 32
-    i64.shl
-    i64.const 4
-    i64.or
-    i64.const 8589934596
-    call $_ZN17soroban_env_guest5guest3vec26vec_new_from_linear_memory17h4c9eaf3d19911ad4E)
   (func $charge (type $t7) (param $p0 i64) (param $p1 i64) (param $p2 i64) (param $p3 i64) (result i64)
     (local $l4 i32)
     global.get $__stack_pointer
@@ -3102,6 +3242,7 @@
       local.get $l2
       i32.const 104
       i32.add
+      i32.const 2
       call $_ZN74_$LT$soroban_sdk..env..Env$u20$as$u20$soroban_env_common..env..EnvBase$GT$18vec_new_from_slice17hb389c0723dfe99baE
       local.set $p0
       local.get $l2
@@ -5561,13 +5702,13 @@
     i32.const 2
     i32.shl
     local.tee $p1
-    i32.const 1049612
+    i32.const 1049644
     i32.add
     i32.load
     i32.store offset=4
     local.get $p0
     local.get $p1
-    i32.const 1049652
+    i32.const 1049684
     i32.add
     i32.load
     i32.store)
@@ -5577,13 +5718,13 @@
     i32.const 2
     i32.shl
     local.tee $p1
-    i32.const 1049692
+    i32.const 1049724
     i32.add
     i32.load
     i32.store offset=4
     local.get $p0
     local.get $p1
-    i32.const 1049732
+    i32.const 1049764
     i32.add
     i32.load
     i32.store)
@@ -5598,6 +5739,16 @@
     local.get $p2
     call $_ZN4core3fmt5write17hbee61cd3fb7b52a3E)
   (func $_ (type $t17))
+  (func $_ZN4core3ptr61drop_in_place$LT$soroban_env_common..val..ConversionError$GT$17h93d354a6d0d2a6c1E (type $t6) (param $p0 i32))
+  (func $_ZN77_$LT$soroban_env_common..val..ConversionError$u20$as$u20$core..fmt..Debug$GT$3fmt17hfdeb4d77676147ccE.83 (type $t1) (param $p0 i32) (param $p1 i32) (result i32)
+    local.get $p1
+    i32.load offset=20
+    i32.const 1049628
+    i32.const 15
+    local.get $p1
+    i32.load offset=24
+    i32.load offset=12
+    call_indirect $T0 (type $t0))
   (func $_ZN4core3ptr53drop_in_place$LT$soroban_env_common..error..Error$GT$17hc42fd58725fd1251E (type $t6) (param $p0 i32))
   (func $__multi3 (type $t30) (param $p0 i32) (param $p1 i64) (param $p2 i64) (param $p3 i64) (param $p4 i64)
     (local $l5 i64) (local $l6 i64) (local $l7 i64) (local $l8 i64) (local $l9 i64) (local $l10 i64)
@@ -6373,11 +6524,11 @@
     i32.const 32
     i32.add
     global.set $__stack_pointer)
-  (table $T0 11 11 funcref)
+  (table $T0 13 13 funcref)
   (memory $memory 17)
   (global $__stack_pointer (mut i32) (i32.const 1048576))
-  (global $__data_end i32 (i32.const 1049772))
-  (global $__heap_base i32 (i32.const 1049776))
+  (global $__data_end i32 (i32.const 1049804))
+  (global $__heap_base i32 (i32.const 1049808))
   (export "memory" (memory $memory))
   (export "sunbeam_sanity" (func $sunbeam_sanity))
   (export "sunbeam_calc_complexity_factor_value_check" (func $sunbeam_calc_complexity_factor_value_check))
@@ -6385,7 +6536,10 @@
   (export "sunbeam_create_activates_subscription" (func $sunbeam_create_activates_subscription))
   (export "sunbeam_deposit_changes_subscription_status_correctly" (func $sunbeam_deposit_changes_subscription_status_correctly))
   (export "sunbeam_cancel_removes_active_subscription" (func $sunbeam_cancel_removes_active_subscription))
-  (export "sunbeam_config_only_once" (func $sunbeam_config_only_once))
+  (export "sunbeam_config_only_once_a" (func $sunbeam_config_only_once_a))
+  (export "sunbeam_config_only_once_b" (func $sunbeam_config_only_once_b))
+  (export "sunbeam_test" (func $sunbeam_test))
+  (export "sunbeam_foo" (func $sunbeam_foo))
   (export "config" (func $config))
   (export "set_fee" (func $set_fee))
   (export "trigger" (func $trigger))
@@ -6404,5 +6558,5 @@
   (export "_" (func $_))
   (export "__data_end" (global $__data_end))
   (export "__heap_base" (global $__heap_base))
-  (elem $e0 (i32.const 1) func $_ZN44_$LT$$RF$T$u20$as$u20$core..fmt..Display$GT$3fmt17h6406aca467bc8103E $_ZN4core3fmt3num3imp52_$LT$impl$u20$core..fmt..Display$u20$for$u20$i32$GT$3fmt17h200b2960d383772bE $_ZN4core3ptr52drop_in_place$LT$core..num..error..ParseIntError$GT$17h8586948620a3550dE $_ZN68_$LT$core..num..error..ParseIntError$u20$as$u20$core..fmt..Debug$GT$3fmt17h05b182d52c6aacd7E $_ZN4core3ptr25drop_in_place$LT$char$GT$17hfb2245d869b41a19E $_ZN68_$LT$core..fmt..builders..PadAdapter$u20$as$u20$core..fmt..Write$GT$9write_str17he0e73688d1af7a7cE $_ZN68_$LT$core..fmt..builders..PadAdapter$u20$as$u20$core..fmt..Write$GT$10write_char17h030517870a05e9b3E $_ZN4core3fmt5Write9write_fmt17hf49084f2671582bdE $_ZN4core3ptr53drop_in_place$LT$soroban_env_common..error..Error$GT$17hc42fd58725fd1251E $_ZN69_$LT$soroban_env_common..error..Error$u20$as$u20$core..fmt..Debug$GT$3fmt17h99b23bf61cfe453bE)
-  (data $.rodata (i32.const 1048576) "\03\00\00\00\01\00\00\00\01\00\00\00\04\00\00\00EmptyInvalidDigitPosOverflowNegOverflowZeroParseIntErrorkindadminbase_feetokenlastassetsource\00\00\00b\00\10\00\05\00\00\00g\00\10\00\06\00\00\00balancebaseheartbeatownerquotestatusthresholdupdatedwebhook\00\80\00\10\00\07\00\00\00\87\00\10\00\04\00\00\00\8b\00\10\00\09\00\00\00\94\00\10\00\05\00\00\00\99\00\10\00\05\00\00\00\9e\00\10\00\06\00\00\00\a4\00\10\00\09\00\00\00\ad\00\10\00\07\00\00\00\b4\00\10\00\07\00\00\00fee\00L\00\10\00\05\00\00\00\04\01\10\00\03\00\00\00Y\00\10\00\05\00\00\00\87\00\10\00\04\00\00\00\8b\00\10\00\09\00\00\00\94\00\10\00\05\00\00\00\99\00\10\00\05\00\00\00\a4\00\10\00\09\00\00\00\b4\00\10\00\07\00\00\001.0.0\00\00\00\05\00\00\00\0c\00\00\00\0b\00\00\00\0b\00\00\00\04\00\00\00\10\00\10\00\15\00\10\00!\00\10\00,\00\10\007\00\10\00called `Option::unwrap()` on a `None` value: \00\00\00\05\00\00\00\0c\00\00\00\04\00\00\00\06\00\00\00\07\00\00\00\08\00\00\00     {  {\0a,\0a} }00010203040506070809101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899ArithDomainIndexBoundsInvalidInputMissingValueExistingValueExceededLimitInvalidActionInternalErrorUnexpectedTypeUnexpectedSizeContractWasmVmContextStorageObjectCryptoEventsBudgetValueAuthError(, )\00Z\03\10\00\06\00\00\00`\03\10\00\02\00\00\00b\03\10\00\01\00\00\00, #\00Z\03\10\00\06\00\00\00|\03\10\00\03\00\00\00b\03\10\00\01\00\00\00Error(#\00\98\03\10\00\07\00\00\00`\03\10\00\02\00\00\00b\03\10\00\01\00\00\00\98\03\10\00\07\00\00\00|\03\10\00\03\00\00\00b\03\10\00\01\00\00\00called `Result::unwrap()` on an `Err` value\00\09\00\00\00\08\00\00\00\08\00\00\00\0a\00\00\00\08\00\00\00\06\00\00\00\07\00\00\00\07\00\00\00\06\00\00\00\06\00\00\00\06\00\00\00\06\00\00\00\05\00\00\00\04\00\00\00\1d\03\10\00%\03\10\00+\03\10\002\03\10\009\03\10\00?\03\10\00E\03\10\00K\03\10\00Q\03\10\00V\03\10\00\0b\00\00\00\0b\00\00\00\0c\00\00\00\0c\00\00\00\0d\00\00\00\0d\00\00\00\0d\00\00\00\0d\00\00\00\0e\00\00\00\0e\00\00\00\9f\02\10\00\aa\02\10\00\b5\02\10\00\c1\02\10\00\cd\02\10\00\da\02\10\00\e7\02\10\00\f4\02\10\00\01\03\10\00\0f\03\10\00"))
+  (elem $e0 (i32.const 1) func $_ZN44_$LT$$RF$T$u20$as$u20$core..fmt..Display$GT$3fmt17h6406aca467bc8103E $_ZN4core3fmt3num3imp52_$LT$impl$u20$core..fmt..Display$u20$for$u20$i32$GT$3fmt17h200b2960d383772bE $_ZN4core3ptr52drop_in_place$LT$core..num..error..ParseIntError$GT$17h8586948620a3550dE $_ZN68_$LT$core..num..error..ParseIntError$u20$as$u20$core..fmt..Debug$GT$3fmt17h05b182d52c6aacd7E $_ZN4core3ptr25drop_in_place$LT$char$GT$17hfb2245d869b41a19E $_ZN68_$LT$core..fmt..builders..PadAdapter$u20$as$u20$core..fmt..Write$GT$9write_str17he0e73688d1af7a7cE $_ZN68_$LT$core..fmt..builders..PadAdapter$u20$as$u20$core..fmt..Write$GT$10write_char17h030517870a05e9b3E $_ZN4core3fmt5Write9write_fmt17hf49084f2671582bdE $_ZN4core3ptr61drop_in_place$LT$soroban_env_common..val..ConversionError$GT$17h93d354a6d0d2a6c1E $_ZN77_$LT$soroban_env_common..val..ConversionError$u20$as$u20$core..fmt..Debug$GT$3fmt17hfdeb4d77676147ccE.83 $_ZN4core3ptr53drop_in_place$LT$soroban_env_common..error..Error$GT$17hc42fd58725fd1251E $_ZN69_$LT$soroban_env_common..error..Error$u20$as$u20$core..fmt..Debug$GT$3fmt17h99b23bf61cfe453bE)
+  (data $.rodata (i32.const 1048576) "\03\00\00\00\01\00\00\00\01\00\00\00\04\00\00\00EmptyInvalidDigitPosOverflowNegOverflowZeroParseIntErrorkindadminbase_feetokenlastassetsource\00\00\00b\00\10\00\05\00\00\00g\00\10\00\06\00\00\00balancebaseheartbeatownerquotestatusthresholdupdatedwebhook\00\80\00\10\00\07\00\00\00\87\00\10\00\04\00\00\00\8b\00\10\00\09\00\00\00\94\00\10\00\05\00\00\00\99\00\10\00\05\00\00\00\9e\00\10\00\06\00\00\00\a4\00\10\00\09\00\00\00\ad\00\10\00\07\00\00\00\b4\00\10\00\07\00\00\00fee\00L\00\10\00\05\00\00\00\04\01\10\00\03\00\00\00Y\00\10\00\05\00\00\00\87\00\10\00\04\00\00\00\8b\00\10\00\09\00\00\00\94\00\10\00\05\00\00\00\99\00\10\00\05\00\00\00\a4\00\10\00\09\00\00\00\b4\00\10\00\07\00\00\001.0.0\00\00\00\05\00\00\00\0c\00\00\00\0b\00\00\00\0b\00\00\00\04\00\00\00\10\00\10\00\15\00\10\00!\00\10\00,\00\10\007\00\10\00called `Option::unwrap()` on a `None` value: \00\00\00\05\00\00\00\0c\00\00\00\04\00\00\00\06\00\00\00\07\00\00\00\08\00\00\00     {  {\0a,\0a} }00010203040506070809101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899ArithDomainIndexBoundsInvalidInputMissingValueExistingValueExceededLimitInvalidActionInternalErrorUnexpectedTypeUnexpectedSizeContractWasmVmContextStorageObjectCryptoEventsBudgetValueAuthError(, )\00Z\03\10\00\06\00\00\00`\03\10\00\02\00\00\00b\03\10\00\01\00\00\00, #\00Z\03\10\00\06\00\00\00|\03\10\00\03\00\00\00b\03\10\00\01\00\00\00Error(#\00\98\03\10\00\07\00\00\00`\03\10\00\02\00\00\00b\03\10\00\01\00\00\00\98\03\10\00\07\00\00\00|\03\10\00\03\00\00\00b\03\10\00\01\00\00\00called `Result::unwrap()` on an `Err` value\00\09\00\00\00\00\00\00\00\01\00\00\00\0a\00\00\00\0b\00\00\00\08\00\00\00\08\00\00\00\0c\00\00\00ConversionError\00\08\00\00\00\06\00\00\00\07\00\00\00\07\00\00\00\06\00\00\00\06\00\00\00\06\00\00\00\06\00\00\00\05\00\00\00\04\00\00\00\1d\03\10\00%\03\10\00+\03\10\002\03\10\009\03\10\00?\03\10\00E\03\10\00K\03\10\00Q\03\10\00V\03\10\00\0b\00\00\00\0b\00\00\00\0c\00\00\00\0c\00\00\00\0d\00\00\00\0d\00\00\00\0d\00\00\00\0d\00\00\00\0e\00\00\00\0e\00\00\00\9f\02\10\00\aa\02\10\00\b5\02\10\00\c1\02\10\00\cd\02\10\00\da\02\10\00\e7\02\10\00\f4\02\10\00\01\03\10\00\0f\03\10\00"))

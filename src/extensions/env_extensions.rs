@@ -29,13 +29,6 @@ impl Nondet for CertoraStorage {
     }
 }
 
-pub static mut STORAGE: Option<CertoraStorage> = None;
-
-// pub(crate) fn init_persistent_storage() {
-//     unsafe {
-//         STORAGE = Some(CertoraStorage::nondet());
-//     }
-// }
 
 pub trait EnvExtensions {
     fn get_admin(&self) -> Option<Address>;

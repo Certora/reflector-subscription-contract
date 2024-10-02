@@ -21,6 +21,15 @@ use types::{
 
 use certora::token::CertoraTokenClient;
 
+extern "C" {
+    fn CVT_SOROBAN_is_auth(address: u64) -> u64;
+}
+
+fn is_auth(address: Address) -> bool {
+    unsafe { CVT_SOROBAN_is_auth(address.to_val().get_payload()) != 0 }
+}
+
+
 const REFLECTOR: Symbol = symbol_short!("reflector");
 
 // 1 day in milliseconds
@@ -107,7 +116,7 @@ impl SubscriptionContract {
     //
     // Panics if the caller doesn't match admin address
     pub fn charge(e: Env, subscription_id: u64, fee: u64, now: u64, days_charged: u64) {
-        // e.panic_if_not_admin(); // NEEDS TO BE SUPPORTED
+        e.panic_if_not_admin();
         let mut total_charge: u64 = 0;
         // let now = now(&e);
         // for subscription_id in subscription_ids.iter() { // CHECK FOR A SINGLE ID ONLY FOR NOW
@@ -596,6 +605,7 @@ fn sunbeam_charge_suspends_subscription_correctly(e: Env, subscription_id: u64, 
     cvt::CVT_assume(days_charged != 0);
     SubscriptionContract::charge(e.clone(), subscription_id.clone(), fee, now, days_charged);
     let subscription = e.get_subscription(subscription_id).unwrap();
+    // cvt::assert!(false);
     cvt::assert!(subscription.balance >= fee || (subscription.status == SubscriptionStatus::Suspended));
 }
 
@@ -607,7 +617,9 @@ fn sunbeam_create_activates_subscription(e: Env, subscription_init_params: Subsc
     cvt::assert!(s.status == SubscriptionStatus::Active);
 }
 
-/* - need to change `retention_fee` once compilert work is done */
+/* - need to change `retention_fee` once compilert work is done
+   - must finish stubbing out token functions
+*/
 #[no_mangle]
 #[inline(never)]
 fn sunbeam_deposit_changes_subscription_status_correctly(e: Env, from: Address, subscription_id: u64, amount: u64) {
@@ -629,11 +641,58 @@ fn sunbeam_cancel_removes_active_subscription(e: Env, subscription_id: u64) {
 
 #[no_mangle]
 #[inline(never)]
-fn sunbeam_config_only_once(e: Env) {
+fn sunbeam_config_only_once_a(e: Env) {
     let config = ContractConfig::nondet();
     SubscriptionContract::config(e.clone(), config.clone());
-    cvt::assert!(false);
-    SubscriptionContract::config(e, config);
+    cvt::assert!(e.is_initialized());
 }
+
+
+#[no_mangle]
+#[inline(never)]
+fn sunbeam_config_only_once_b(e: Env) {
+    cvt::CVT_assume(e.is_initialized());
+    let config = ContractConfig::nondet();
+    SubscriptionContract::config(e, config);
+    cvt::assert!(false); // should not reach
+}
+
+
+/* - changed the signature of `charge` to take `fee`, `now`, and `days_charged`.
+   - removed for loop so only checks for a single id for now
+   - updated condition that checks `if days_charged == 0` accordingly without changing semantics
+   - will remove the fee passing once compilert work is done
+*/
+// #[no_mangle]
+// #[inline(never)]
+// fn sunbeam_only_admin_charges_retention_fee_a(e: Env, subscription_id: u64, fee: u64) {
+//     cvt::require!(!is_auth(e.get_admin().unwrap()), "Admin is not authorized");
+//     let now = now(&e);
+//     let days_charged = (now - e.get_subscription(subscription_id).unwrap().updated) / DAY;
+//     SubscriptionContract::charge(e.clone(), subscription_id.clone(), fee, now, days_charged);
+//     cvt::assert!(false); // should not reach
+// }
+
+
+// #[no_mangle]
+// #[inline(never)]
+// fn sunbeam_only_admin_charges_retention_fee_b(e: Env, subscription_id: u64, fee: u64) {
+//     cvt::require!(is_auth(e.get_admin().unwrap()), "Admin is authorized");
+//     let now = now(&e);
+//     let days_charged = (now - e.get_subscription(subscription_id).unwrap().updated) / DAY;
+//     SubscriptionContract::charge(e.clone(), subscription_id.clone(), fee, now, days_charged);
+//     cvt::assert!(false); // should reach and fail
+// }
+
+#[no_mangle]
+#[inline(never)]
+fn sunbeam_test(e: Env) {
+    let config = ContractConfig::nondet();
+    SubscriptionContract::config(e, config);
+    cvt::assert!(false);
+}
+
+
+
 
 mod test;
