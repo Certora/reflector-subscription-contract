@@ -4,18 +4,18 @@ mod certora;
 mod extensions;
 mod types;
 
-use extensions::{
-    env_extensions::{EnvExtensions},
-    u128_extensions::U128Extensions,
-};
+use extensions::{env_extensions::EnvExtensions, u128_extensions::U128Extensions};
 use nondet::*;
 use soroban_sdk::{
     contract, contractimpl, panic_with_error, symbol_short, Address, BytesN, Env, Symbol, Vec,
 };
 
 use types::{
-    contract_config::ContractConfig, error::Error, subscription::{self, Subscription},
-    subscription_init_params::SubscriptionInitParams, subscription_status::SubscriptionStatus,
+    contract_config::ContractConfig,
+    error::Error,
+    subscription::{self, Subscription},
+    subscription_init_params::SubscriptionInitParams,
+    subscription_status::SubscriptionStatus,
     ticker_asset::TickerAsset,
 };
 
@@ -28,7 +28,6 @@ extern "C" {
 fn is_auth(address: Address) -> bool {
     unsafe { CVT_SOROBAN_is_auth(address.to_val().get_payload()) != 0 }
 }
-
 
 const REFLECTOR: Symbol = symbol_short!("reflector");
 
@@ -116,51 +115,51 @@ impl SubscriptionContract {
     //
     // Panics if the caller doesn't match admin address
     pub fn charge(e: Env, subscription_id: u64, fee: u64, now: u64, days_charged: u64) {
-        e.panic_if_not_admin();
+        // e.panic_if_not_admin();
         let mut total_charge: u64 = 0;
         // let now = now(&e);
         // for subscription_id in subscription_ids.iter() { // CHECK FOR A SINGLE ID ONLY FOR NOW
-            if let Some(mut subscription) = e.get_subscription(subscription_id) {
-                // We can charge fees for several days in case if there was an interruption in background worker charge process
-                // let days_charged = (now - subscription.updated) / DAY;
-                if days_charged != 0 {
-                    // let fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
-                    let mut charge = days_charged * fee;
-                    // Do not charge more than left on the subscription balance
-                    if subscription.balance < charge {
-                        charge = subscription.balance;
-                    }
-                    // Deduct calculated retention fees
-                    subscription.balance -= charge;
-                    subscription.updated = now;
-                    // Publish charged event
-                    // e.events().publish( // NEEDS TO BE SUPPORTED
+        if let Some(mut subscription) = e.get_subscription(subscription_id) {
+            // We can charge fees for several days in case if there was an interruption in background worker charge process
+            // let days_charged = (now - subscription.updated) / DAY;
+            if days_charged != 0 {
+                // let fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
+                let mut charge = days_charged * fee;
+                // Do not charge more than left on the subscription balance
+                if subscription.balance < charge {
+                    charge = subscription.balance;
+                }
+                // Deduct calculated retention fees
+                subscription.balance -= charge;
+                subscription.updated = now;
+                // Publish charged event
+                // e.events().publish( // NEEDS TO BE SUPPORTED
+                //     (
+                //         REFLECTOR,
+                //         symbol_short!("charged"),
+                //         subscription.owner.clone(),
+                //     ),
+                //     (subscription_id, charge, now),
+                // );
+                // Deactivate the subscription if the balance is less than the daily retention fee
+                if subscription.balance < fee {
+                    subscription.status = SubscriptionStatus::Suspended;
+                    // Publish suspended event
+                    // e.events().publish(
                     //     (
                     //         REFLECTOR,
-                    //         symbol_short!("charged"),
+                    //         symbol_short!("suspended"),
                     //         subscription.owner.clone(),
                     //     ),
-                    //     (subscription_id, charge, now),
+                    //     (subscription_id, now),
                     // );
-                    // Deactivate the subscription if the balance is less than the daily retention fee
-                    if subscription.balance < fee {
-                        subscription.status = SubscriptionStatus::Suspended;
-                        // Publish suspended event
-                        // e.events().publish(
-                        //     (
-                        //         REFLECTOR,
-                        //         symbol_short!("suspended"),
-                        //         subscription.owner.clone(),
-                        //     ),
-                        //     (subscription_id, now),
-                        // );
-                    }
-                    // Update subscription properties
-                    e.set_subscription(subscription_id, &subscription);
-                    // Sum all retention fee charges
-                    total_charge += charge; 
                 }
+                // Update subscription properties
+                e.set_subscription(subscription_id, &subscription);
+                // Sum all retention fee charges
+                total_charge += charge;
             }
+        }
         // }
         // Burn tokens charged from all subscriptions
         if total_charge > 0 {
@@ -209,7 +208,7 @@ impl SubscriptionContract {
         new_subscription: SubscriptionInitParams,
         amount: u64,
     ) -> (u64, Subscription) {
-        // panic_if_not_initialized(&e);
+        panic_if_not_initialized(&e);
         // Check the authorization
         new_subscription.owner.require_auth();
         // Calculate daily retention fee based on subscription params
@@ -285,7 +284,7 @@ impl SubscriptionContract {
     // Panics if the subscription does not exist
     // Panics if the token transfer fails
     pub fn deposit(e: Env, from: Address, subscription_id: u64, amount: u64) {
-        // panic_if_not_initialized(&e);
+        panic_if_not_initialized(&e);
         from.require_auth();
         // Check deposit amount
         if amount == 0 {
@@ -296,13 +295,12 @@ impl SubscriptionContract {
             .get_subscription(subscription_id)
             .unwrap_or_else(|| panic_with_error!(e, Error::SubscriptionNotFound));
         // Calculate daily retention fee based on subscription params
-        let retention_fee = u64::nondet();
-        // calc_fee(
-        //     e.get_fee(),
-        //     &subscription.base,
-        //     &subscription.quote,
-        //     subscription.heartbeat,
-        // );
+        let retention_fee = calc_fee(
+            e.get_fee(),
+            &subscription.base,
+            &subscription.quote,
+            subscription.heartbeat,
+        );
         // Transfer tokens
         deposit(&e, &from, amount);
         // Update subscription balance
@@ -350,7 +348,7 @@ impl SubscriptionContract {
     // Panics if the subscription is not active
     // Panics if the token transfer fails
     pub fn cancel(e: Env, subscription_id: u64) {
-        // panic_if_not_initialized(&e);
+        panic_if_not_initialized(&e);
         // Load subscription
         let subscription = e
             .get_subscription(subscription_id)
@@ -501,7 +499,6 @@ pub fn calc_fee(
     quote_symbol: &TickerAsset,
     heartbeat: u32,
 ) -> u64 {
-
     let heartbeat_fee = calc_hearbeat_fee(base_fee, heartbeat);
     let complexity_factor = calc_complexity_factor(base_symbol, quote_symbol);
     heartbeat_fee * complexity_factor
@@ -574,125 +571,5 @@ fn calc_ledgers_to_live(e: &Env, fee: u64, amount: u64) -> u32 {
 
     ledgers
 }
-
-#[no_mangle]
-#[inline(never)]
-fn sunbeam_sanity(env: soroban_sdk::Env, fee: u64, amount: u64, address: Address) {
-    let _ = calc_ledgers_to_live(&env, fee, amount);
-    let _ = now(&env);
-    withdraw(&env, &address, amount);
-    cvt::assert!(false);
-}
-
-
-#[no_mangle]
-#[inline(never)]
-fn sunbeam_calc_complexity_factor_value_check(base_symbol: &TickerAsset, quote_symbol: &TickerAsset) {
-    let res = calc_complexity_factor(base_symbol, quote_symbol);
-    cvt::assert!(res == 1 || res == 2);
-}
-
-/* - changed the signature of `charge` to take `fee`, `now`, and `days_charged`.
-   - removed for loop so only checks for a single id for now
-   - updated condition that checks `if days_charged == 0` accordingly without changing semantics
-   - will remove the fee passing once compilert work is done
-*/
-#[no_mangle]
-#[inline(never)]
-fn sunbeam_charge_suspends_subscription_correctly(e: Env, subscription_id: u64, fee: u64) {
-    let now = now(&e);
-    let days_charged = (now - e.get_subscription(subscription_id).unwrap().updated) / DAY;
-    cvt::CVT_assume(days_charged != 0);
-    SubscriptionContract::charge(e.clone(), subscription_id.clone(), fee, now, days_charged);
-    let subscription = e.get_subscription(subscription_id).unwrap();
-    // cvt::assert!(false);
-    cvt::assert!(subscription.balance >= fee || (subscription.status == SubscriptionStatus::Suspended));
-}
-
-/* - commented out ttl, event, and `panic_if_not_initialized` */
-#[no_mangle]
-#[inline(never)]
-fn sunbeam_create_activates_subscription(e: Env, subscription_init_params: SubscriptionInitParams, amount: u64) {
-    let (_, s) = SubscriptionContract::create_subscription(e.clone(), subscription_init_params, amount);
-    cvt::assert!(s.status == SubscriptionStatus::Active);
-}
-
-/* - need to change `retention_fee` once compilert work is done
-   - must finish stubbing out token functions
-*/
-#[no_mangle]
-#[inline(never)]
-fn sunbeam_deposit_changes_subscription_status_correctly(e: Env, from: Address, subscription_id: u64, amount: u64) {
-    let status_before = e.get_subscription(subscription_id).unwrap().status;
-    SubscriptionContract::deposit(e.clone(), from, subscription_id, amount);
-    let status_after = e.get_subscription(subscription_id).unwrap().status;
-    cvt::assert!(status_before != SubscriptionStatus::Suspended || status_after == SubscriptionStatus::Active);
-}
-
-
-#[no_mangle]
-#[inline(never)]
-fn sunbeam_cancel_removes_active_subscription(e: Env, subscription_id: u64) {
-    SubscriptionContract::cancel(e.clone(), subscription_id);
-    let _ =  e.get_subscription(subscription_id).unwrap();
-    cvt::assert!(false); // should not reach
-}
-
-
-#[no_mangle]
-#[inline(never)]
-fn sunbeam_config_only_once_a(e: Env) {
-    let config = ContractConfig::nondet();
-    SubscriptionContract::config(e.clone(), config.clone());
-    cvt::assert!(e.is_initialized());
-}
-
-
-#[no_mangle]
-#[inline(never)]
-fn sunbeam_config_only_once_b(e: Env) {
-    cvt::CVT_assume(e.is_initialized());
-    let config = ContractConfig::nondet();
-    SubscriptionContract::config(e, config);
-    cvt::assert!(false); // should not reach
-}
-
-
-/* - changed the signature of `charge` to take `fee`, `now`, and `days_charged`.
-   - removed for loop so only checks for a single id for now
-   - updated condition that checks `if days_charged == 0` accordingly without changing semantics
-   - will remove the fee passing once compilert work is done
-*/
-// #[no_mangle]
-// #[inline(never)]
-// fn sunbeam_only_admin_charges_retention_fee_a(e: Env, subscription_id: u64, fee: u64) {
-//     cvt::require!(!is_auth(e.get_admin().unwrap()), "Admin is not authorized");
-//     let now = now(&e);
-//     let days_charged = (now - e.get_subscription(subscription_id).unwrap().updated) / DAY;
-//     SubscriptionContract::charge(e.clone(), subscription_id.clone(), fee, now, days_charged);
-//     cvt::assert!(false); // should not reach
-// }
-
-
-// #[no_mangle]
-// #[inline(never)]
-// fn sunbeam_only_admin_charges_retention_fee_b(e: Env, subscription_id: u64, fee: u64) {
-//     cvt::require!(is_auth(e.get_admin().unwrap()), "Admin is authorized");
-//     let now = now(&e);
-//     let days_charged = (now - e.get_subscription(subscription_id).unwrap().updated) / DAY;
-//     SubscriptionContract::charge(e.clone(), subscription_id.clone(), fee, now, days_charged);
-//     cvt::assert!(false); // should reach and fail
-// }
-
-#[no_mangle]
-#[inline(never)]
-fn sunbeam_test(e: Env) {
-    let config = ContractConfig::nondet();
-    SubscriptionContract::config(e, config);
-    cvt::assert!(false);
-}
-
-
-
 
 mod test;
