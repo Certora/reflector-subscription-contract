@@ -1,18 +1,19 @@
-use crate::{extensions::env_extensions::EnvExtensions, types::subscription_status::SubscriptionStatus, SubscriptionContract};
+use crate::{extensions::env_extensions::EnvExtensions, types::{subscription, subscription_status::SubscriptionStatus}, SubscriptionContract};
 use soroban_sdk::{contracttype, Address, Env};
 use cvt_soroban::is_auth;
+use cvt::{satisfy, assert, assume};
 
-#[inline(never)]
+/// Verify that `cancel` is not vacuous
 #[no_mangle]
 pub fn cancel_sanity(
     env: Env,
     subscription_id: u64
 ) {
     SubscriptionContract::cancel(env.clone(), subscription_id);
-    cvt::assert!(false);
+    satisfy!(true);
 }
 
-#[inline(never)]
+/// Verify that `cancel` aborts if the subscription owner is not the authorized user
 #[no_mangle]
 pub fn cancel_non_owner(
     env: Env,
@@ -20,14 +21,14 @@ pub fn cancel_non_owner(
 ) {
     let subscription_auth = env.get_subscription(subscription_id).map_or(false, |s| is_auth(s.owner));
 
-    cvt::require!(!subscription_auth, "subscription owner not authorized");
+    require!(!subscription_auth, "subscription owner not authorized");
     SubscriptionContract::cancel(env.clone(), subscription_id);
 
     // If the owner is not authorized, then cancel aborts
-    cvt::assert!(false);
+    assert!(false);
 }
 
-#[inline(never)]
+/// Verify that `cancel` aborts if the subscription is not active
 #[no_mangle]
 pub fn cancel_inactive(
     env: Env,
@@ -37,14 +38,14 @@ pub fn cancel_inactive(
         .get_subscription(subscription_id)
         .map_or(false, |s| s.status == SubscriptionStatus::Active);
 
-    cvt::require!( !subscription_active, "subscription not active" );
+    require!( !subscription_active, "subscription not active" );
     SubscriptionContract::cancel(env.clone(), subscription_id);
 
     // If the subscription is not active, then cancel aborts
-    cvt::assert!(false);
+    assert!(false);
 }
 
-#[inline(never)]
+/// Verify that when `cancel` returns, the subscription is canceled
 #[no_mangle]
 pub fn cancel_subscription_success(
     env: Env,
@@ -52,7 +53,38 @@ pub fn cancel_subscription_success(
 ) -> () {
     let subscription_pre  = env.get_subscription(subscription_id).unwrap();
     SubscriptionContract::cancel(env.clone(), subscription_id);
-
     // Subscription is canceled after the call
-    cvt::assert!(env.get_subscription(subscription_id).is_none());
+    assert!(env.get_subscription(subscription_id).is_none());
+}
+
+#[no_mangle]
+pub fn deposit_sanity(
+    env: Env,
+    from: Address,
+    subscription_id: u64,
+    amount: u64
+) {
+    SubscriptionContract::deposit(env, from, subscription_id, amount);
+    satisfy!(true);
+}
+
+#[no_mangle]
+pub fn deposit_owner(
+    env: Env,
+    from: Address,
+    subscription_id: u64,
+    amount: u64
+) {
+    let owner_auth = env.get_subscription(subscription_id).map_or(false, |s| is_auth(s.owner));
+    SubscriptionContract::deposit(env, from, subscription_id, amount);
+    assert!(owner_auth);
+}
+
+#[no_mangle]
+pub fn charge_sanity(
+    e: Env,
+    subscription_ids: soroban_sdk::Vec<u64>
+) {
+    SubscriptionContract::charge(e, subscription_ids);
+    satisfy!(true);
 }

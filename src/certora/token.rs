@@ -2,14 +2,8 @@ use soroban_sdk::{Env, Address, String};
 use cvt_soroban_macros::cvt_contractclient as mockclient;
 use nondet::*;
 
-fn check_nonnegative_amount(amount: i128) {
-    if amount < 0 {
-        panic!("negative amount is not allowed: {}", amount)
-    }
-}
-
 #[mockclient(name = "TokenClient")]
-pub trait TokenInterface {
+trait TokenInterface {
     fn allowance(env: Env, from: Address, spender: Address) -> i128;
     fn approve(env: Env, from: Address, spender: Address, amount: i128, expiration_ledger: u32);
     fn balance(env: Env, id: Address) -> i128;

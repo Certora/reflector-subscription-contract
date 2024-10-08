@@ -125,6 +125,8 @@ impl SubscriptionContract {
                 subscription.balance -= charge;
                 subscription.updated = now;
                 // Publish charged event
+                #[cfg(not(feat = "cvt"))]
+                {
                 e.events().publish(
                     (
                         REFLECTOR,
@@ -133,10 +135,13 @@ impl SubscriptionContract {
                     ),
                     (subscription_id, charge, now),
                 );
+                }
                 // Deactivate the subscription if the balance is less than the daily retention fee
                 if subscription.balance < fee {
                     subscription.status = SubscriptionStatus::Suspended;
                     // Publish suspended event
+                    #[cfg(not(feat = "cvt"))]
+                    {
                     e.events().publish(
                         (
                             REFLECTOR,
@@ -145,6 +150,7 @@ impl SubscriptionContract {
                         ),
                         (subscription_id, now),
                     );
+                    }
                 }
                 // Update subscription properties
                 e.set_subscription(subscription_id, &subscription);
@@ -297,10 +303,13 @@ impl SubscriptionContract {
         // Extend TTL based on the subscription retention fee and balance
         e.extend_subscription_ttl(subscription_id, calc_ledgers_to_live(&e, retention_fee, subscription.balance));
         // Publish subscription deposited event
-        e.events().publish(
-            (REFLECTOR, symbol_short!("deposited"), subscription.owner.clone()),
-            (subscription_id, subscription, amount),
-        );
+        #[cfg(not(feature = "cvt"))]
+        {
+            e.events().publish(
+                (REFLECTOR, symbol_short!("deposited"), subscription.owner.clone()),
+                (subscription_id, subscription, amount),
+            );
+        }
     }
 
     // Cancel active subscription and reimburse the balance to subscription owner account
