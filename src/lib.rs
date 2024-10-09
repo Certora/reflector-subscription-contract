@@ -21,14 +21,6 @@ use types::{
 
 use certora::token::CertoraTokenClient;
 
-extern "C" {
-    fn CVT_SOROBAN_is_auth(address: u64) -> u64;
-}
-
-fn is_auth(address: Address) -> bool {
-    unsafe { CVT_SOROBAN_is_auth(address.to_val().get_payload()) != 0 }
-}
-
 const REFLECTOR: Symbol = symbol_short!("reflector");
 
 // 1 day in milliseconds
@@ -115,7 +107,7 @@ impl SubscriptionContract {
     //
     // Panics if the caller doesn't match admin address
     pub fn charge(e: Env, subscription_id: u64, fee: u64, now: u64, days_charged: u64) {
-        // e.panic_if_not_admin();
+        e.panic_if_not_admin();
         let mut total_charge: u64 = 0;
         // let now = now(&e);
         // for subscription_id in subscription_ids.iter() { // CHECK FOR A SINGLE ID ONLY FOR NOW
@@ -123,7 +115,7 @@ impl SubscriptionContract {
             // We can charge fees for several days in case if there was an interruption in background worker charge process
             // let days_charged = (now - subscription.updated) / DAY;
             if days_charged != 0 {
-                // let fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
+                let fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
                 let mut charge = days_charged * fee;
                 // Do not charge more than left on the subscription balance
                 if subscription.balance < charge {
