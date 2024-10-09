@@ -20,8 +20,9 @@ lto = true
 soroban-sdk = "21.6.0"
 nondet = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban", default-features=false, features=["soroban"]}
 cvt = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban", default-features=false, features=[]}
-cvt-soroban = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban", default-features=false}
-cvt-soroban-macros = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban", default-features=false}
+cvt-soroban = {git = "https://github.com/Certora/solana-cvt.git", branch="abakst/dev-soroban", default-features=false}
+cvt-soroban-macros = {git = "https://github.com/Certora/solana-cvt.git", branch="abakst/dev-soroban", default-features=false}
+paste = "1.0.5"
 
 [dev-dependencies]
 soroban-sdk = { version = "21.6.0", features = ["testutils"] }

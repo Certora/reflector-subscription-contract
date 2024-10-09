@@ -255,7 +255,7 @@ dependencies = [
 [[package]]
 name = "cvt-soroban"
 version = "0.1.0"
-source = "git+https://github.com/Certora/solana-cvt.git?branch=dev-soroban#551394866147fab7e111be0ab2959c1a7fd5d3ca"
+source = "git+https://github.com/Certora/solana-cvt.git?branch=abakst/dev-soroban#c94baae613dffc7838fd5930aaf15e3f7d5cb922"
 dependencies = [
  "soroban-sdk",
 ]
@@ -263,7 +263,7 @@ dependencies = [
 [[package]]
 name = "cvt-soroban-macros"
 version = "0.1.0"
-source = "git+https://github.com/Certora/solana-cvt.git?branch=dev-soroban#551394866147fab7e111be0ab2959c1a7fd5d3ca"
+source = "git+https://github.com/Certora/solana-cvt.git?branch=abakst/dev-soroban#c94baae613dffc7838fd5930aaf15e3f7d5cb922"
 dependencies = [
  "darling",
  "proc-macro2",
@@ -271,6 +271,7 @@ dependencies = [
  "soroban-sdk",
  "soroban-sdk-macros",
  "syn",
+ "uuid",
 ]
 
 [[package]]
@@ -859,6 +860,7 @@ dependencies = [
  "cvt-soroban",
  "cvt-soroban-macros",
  "nondet",
+ "paste",
  "soroban-sdk",
 ]
 
@@ -1340,6 +1342,15 @@ name = "unicode-ident"
 version = "1.0.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e91b56cd4cadaeb79bbf1a5645f6b4f8dc5bde8834ad5894a8db35fda9efa1fe"
+
+[[package]]
+name = "uuid"
+version = "1.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "81dfa00651efa65069b0b6b651f4aaa31ba9e3c3ce0137aaad053604ee7e0314"
+dependencies = [
+ "getrandom",
+]
 
 [[package]]
 name = "version_check"

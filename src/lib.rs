@@ -3,7 +3,7 @@
 mod extensions;
 mod types;
 
-mod certora;
+pub mod certora;
 
 use extensions::{env_extensions::EnvExtensions, u128_extensions::U128Extensions};
 use soroban_sdk::{
@@ -18,6 +18,7 @@ use types::{
     contract_config::ContractConfig, error::Error, subscription::Subscription,
     subscription_init_params::SubscriptionInitParams, subscription_status::SubscriptionStatus, ticker_asset::TickerAsset,
 };
+use nondet::*;
 
 const REFLECTOR: Symbol = symbol_short!("reflector");
 
@@ -88,6 +89,7 @@ impl SubscriptionContract {
     pub fn trigger(e: Env, timestamp: u64, trigger_hash: BytesN<32>) {
         e.panic_if_not_admin();
         // Publish triggered event with root hash of all generated notifications
+        #[cfg(not(feat = "cvt"))]
         e.events().publish(
             (REFLECTOR, symbol_short!("triggered")),
             (timestamp, trigger_hash),
@@ -251,6 +253,7 @@ impl SubscriptionContract {
         e.extend_subscription_ttl(subscription_id, calc_ledgers_to_live(&e, retention_fee, subscription.balance));
         // Publish subscription created event
         let data = (subscription_id, subscription.clone());
+        #[cfg(not(feat = "cvt"))]
         e.events()
             .publish((REFLECTOR, symbol_short!("created"), subscription.owner), data.clone());
         return data;
