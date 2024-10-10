@@ -19,7 +19,10 @@ use types::{
     ticker_asset::TickerAsset,
 };
 
-use certora::token::CertoraTokenClient;
+#[cfg(feature = "cvt")]
+use certora::token::TokenClient;
+#[cfg(not(feature = "cvt"))]
+use soroban_sdk::token::TokenClient;
 
 const REFLECTOR: Symbol = symbol_short!("reflector");
 
@@ -525,8 +528,8 @@ fn panic_if_not_initialized(e: &Env) {
 }
 
 // Initialize a client for Reflector token contract
-fn get_token_client(e: &Env) -> CertoraTokenClient {
-    CertoraTokenClient::new(e, &e.get_token())
+fn get_token_client(e: &Env) -> TokenClient {
+    TokenClient::new(e, &e.get_token())
 }
 
 // Transfer tokens to the contract balance
