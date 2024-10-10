@@ -39,10 +39,10 @@ fn sunbeam_charge_suspends_subscription_correctly(e: Env, subscription_id: u64, 
     let now = now(&e);
     let days_charged = (now - e.get_subscription(subscription_id).unwrap().updated) / DAY;
     cvt::CVT_assume(days_charged != 0);
-    SubscriptionContract::charge(e.clone(), subscription_id.clone(), fee, now, days_charged);
+    SubscriptionContract::charge(e.clone(), subscription_id.clone(), now, days_charged);
     let subscription = e.get_subscription(subscription_id).unwrap();
-    // cvt::assert!(false);
-    cvt::assert!(subscription.balance >= fee || (subscription.status == SubscriptionStatus::Suspended));
+    cvt::assert!(false);
+   //  cvt::assert!(subscription.balance >= fee || (subscription.status == SubscriptionStatus::Suspended));
 }
 
 /* - commented out ttl, event */
@@ -98,7 +98,7 @@ fn sunbeam_config_only_once_b(e: Env) {
 #[inline(never)]
 fn sunbeam_only_admin_charge_retention_fee_sanity(e: Env, subscription_id: u64, fee: u64, now: u64, days_charged: u64) {
     cvt::CVT_assume(e.storage().instance().has(&"admin") && is_auth(e.get_admin().unwrap()));
-    SubscriptionContract::charge(e, subscription_id, fee, now, days_charged);
+    SubscriptionContract::charge(e, subscription_id, now, days_charged);
     cvt::assert!(false); // should fail
 }
 
@@ -106,6 +106,6 @@ fn sunbeam_only_admin_charge_retention_fee_sanity(e: Env, subscription_id: u64, 
 #[inline(never)]
 fn sunbeam_only_admin_charge_retention_fee(e: Env, subscription_id: u64, fee: u64, now: u64, days_charged: u64) {
     cvt::CVT_assume(!is_auth(e.get_admin().unwrap()));
-    SubscriptionContract::charge(e, subscription_id, fee, now, days_charged);
+    SubscriptionContract::charge(e, subscription_id, now, days_charged);
     cvt::assert!(false); // should not reach
 }

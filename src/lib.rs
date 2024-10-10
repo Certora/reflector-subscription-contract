@@ -109,7 +109,7 @@ impl SubscriptionContract {
     // # Panics
     //
     // Panics if the caller doesn't match admin address
-    pub fn charge(e: Env, subscription_id: u64, fee: u64, now: u64, days_charged: u64) {
+    pub fn charge(e: Env, subscription_id: u64, now: u64, days_charged: u64) {
         e.panic_if_not_admin();
         let mut total_charge: u64 = 0;
         // let now = now(&e);
@@ -128,26 +128,28 @@ impl SubscriptionContract {
                 subscription.balance -= charge;
                 subscription.updated = now;
                 // Publish charged event
-                // e.events().publish( // NEEDS TO BE SUPPORTED
-                //     (
-                //         REFLECTOR,
-                //         symbol_short!("charged"),
-                //         subscription.owner.clone(),
-                //     ),
-                //     (subscription_id, charge, now),
-                // );
+                #[cfg(not(feature = "cvt"))]
+                e.events().publish( // NEEDS TO BE SUPPORTED
+                    (
+                        REFLECTOR,
+                        symbol_short!("charged"),
+                        subscription.owner.clone(),
+                    ),
+                    (subscription_id, charge, now),
+                );
                 // Deactivate the subscription if the balance is less than the daily retention fee
                 if subscription.balance < fee {
                     subscription.status = SubscriptionStatus::Suspended;
                     // Publish suspended event
-                    // e.events().publish(
-                    //     (
-                    //         REFLECTOR,
-                    //         symbol_short!("suspended"),
-                    //         subscription.owner.clone(),
-                    //     ),
-                    //     (subscription_id, now),
-                    // );
+                    #[cfg(not(feature = "cvt"))]
+                    e.events().publish(
+                        (
+                            REFLECTOR,
+                            symbol_short!("suspended"),
+                            subscription.owner.clone(),
+                        ),
+                        (subscription_id, now),
+                    );
                 }
                 // Update subscription properties
                 e.set_subscription(subscription_id, &subscription);
@@ -251,16 +253,18 @@ impl SubscriptionContract {
         e.set_subscription(subscription_id, &subscription);
         e.set_last_subscription_id(subscription_id);
         // Extend TTL based on the subscription retention fee and balance
-        // e.extend_subscription_ttl(
-        //     subscription_id,
-        //     calc_ledgers_to_live(&e, retention_fee, subscription.balance),
-        // );
+        #[cfg(not(feature = "cvt"))]
+        e.extend_subscription_ttl(
+            subscription_id,
+            calc_ledgers_to_live(&e, retention_fee, subscription.balance),
+        );
         // Publish subscription created event
         let data = (subscription_id, subscription.clone());
-        // e.events().publish(
-        //     (REFLECTOR, symbol_short!("created"), subscription.owner),
-        //     data.clone(),
-        // );
+        #[cfg(not(feature = "cvt"))]
+        e.events().publish(
+            (REFLECTOR, symbol_short!("created"), subscription.owner),
+            data.clone(),
+        );
         return data;
     }
 
@@ -314,19 +318,21 @@ impl SubscriptionContract {
         // Update state
         e.set_subscription(subscription_id, &subscription);
         // Extend TTL based on the subscription retention fee and balance
-        // e.extend_subscription_ttl(
-        //     subscription_id,
-        //     calc_ledgers_to_live(&e, retention_fee, subscription.balance),
-        // );
+        #[cfg(not(feature = "cvt"))]
+        e.extend_subscription_ttl(
+            subscription_id,
+            calc_ledgers_to_live(&e, retention_fee, subscription.balance),
+        );
         // Publish subscription deposited event
-        // e.events().publish(
-        //     (
-        //         REFLECTOR,
-        //         symbol_short!("deposited"),
-        //         subscription.owner.clone(),
-        //     ),
-        //     (subscription_id, subscription, amount),
-        // );
+        #[cfg(not(feature = "cvt"))]
+        e.events().publish(
+            (
+                REFLECTOR,
+                symbol_short!("deposited"),
+                subscription.owner.clone(),
+            ),
+            (subscription_id, subscription, amount),
+        );
     }
 
     // Cancel active subscription and reimburse the balance to subscription owner account
@@ -362,10 +368,11 @@ impl SubscriptionContract {
         // Remove subscription from the state
         e.remove_subscription(subscription_id);
         // Publish subscription cancelled event
-        // e.events().publish(
-        //     (REFLECTOR, symbol_short!("cancelled"), subscription.owner),
-        //     subscription_id,
-        // );
+        #[cfg(not(feature = "cvt"))]
+        e.events().publish(
+            (REFLECTOR, symbol_short!("cancelled"), subscription.owner),
+            subscription_id,
+        );
     }
 
     // Get subscription by ID

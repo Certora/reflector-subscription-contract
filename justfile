@@ -1,6 +1,6 @@
 
 build:
-    RUSTFLAGS="-C strip=none --emit=llvm-ir" cargo build --target=wasm32-unknown-unknown --release
+    RUSTFLAGS="-C strip=none --emit=llvm-ir" cargo build --target=wasm32-unknown-unknown --release --features cvt
 
 wasm2wat :=  "wasm2wat"
 wat2wasm := "wat2wasm"
