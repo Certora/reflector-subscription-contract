@@ -1,34 +1,30 @@
 use crate::{
     extensions::env_extensions::EnvExtensions,
     types::{
-        subscription,
         subscription_init_params::SubscriptionInitParams,
         subscription_status::SubscriptionStatus,
-        contract_config::ContractConfig,
     },
     SubscriptionContract
 };
-use soroban_sdk::{contracttype, Address, Env, Vec, BytesN};
+use soroban_sdk::{Address, Env, Vec, BytesN};
 use cvt_soroban::{is_auth, Call, make_callable, parametric_rule};
 use cvt::{satisfy, assert, require};
 use cvt_soroban_macros::{rule, declare_rules};
 
-/// Verify that `cancel` aborts if the subscription owner is not the authorized user
+/// `cancel` aborts if the subscription owner is not the authorized user
 #[rule]
 pub fn cancel_non_owner(
     env: Env,
     subscription_id: u64
 ) {
     let subscription_auth = env.get_subscription(subscription_id).map_or(false, |s| is_auth(s.owner));
-
     require!(!subscription_auth, "subscription owner not authorized");
     SubscriptionContract::cancel(env.clone(), subscription_id);
-
     // If the owner is not authorized, then cancel aborts
     assert!(false);
 }
 
-/// Verify that `cancel` aborts if the subscription is not active
+/// `cancel` aborts if the subscription is not active
 #[rule]
 pub fn cancel_inactive(
     env: Env,
@@ -37,26 +33,24 @@ pub fn cancel_inactive(
     let subscription_active = env
         .get_subscription(subscription_id)
         .map_or(false, |s| s.status == SubscriptionStatus::Active);
-
     require!( !subscription_active, "subscription not active" );
     SubscriptionContract::cancel(env.clone(), subscription_id);
-
     // If the subscription is not active, then cancel aborts
     assert!(false);
 }
 
-/// Verify that when `cancel` returns, the subscription is canceled
+/// When `cancel` returns, the subscription is canceled
 #[rule]
 pub fn cancel_subscription_success(
     env: Env,
     subscription_id: u64,
 ) -> () {
-    let subscription_pre  = env.get_subscription(subscription_id).unwrap();
     SubscriptionContract::cancel(env.clone(), subscription_id);
-    // Subscription is canceled after the call
+    // Subscription does not exist after the call
     assert!(env.get_subscription(subscription_id).is_none());
 }
 
+/// Only `from` can deposit funds
 #[rule]
 pub fn deposit_owner(
     env: Env,

@@ -18,7 +18,6 @@ use types::{
     contract_config::ContractConfig, error::Error, subscription::Subscription,
     subscription_init_params::SubscriptionInitParams, subscription_status::SubscriptionStatus, ticker_asset::TickerAsset,
 };
-use nondet::*;
 
 const REFLECTOR: Symbol = symbol_short!("reflector");
 
