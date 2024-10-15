@@ -88,7 +88,6 @@ impl SubscriptionContract {
     pub fn trigger(e: Env, timestamp: u64, trigger_hash: BytesN<32>) {
         e.panic_if_not_admin();
         // Publish triggered event with root hash of all generated notifications
-        #[cfg(not(feature = "cvt"))]
         e.events().publish(
             (REFLECTOR, symbol_short!("triggered")),
             (timestamp, trigger_hash),
@@ -126,7 +125,6 @@ impl SubscriptionContract {
                 subscription.balance -= charge;
                 subscription.updated = now;
                 // Publish charged event
-                #[cfg(not(feature = "cvt"))]
                 {
                 e.events().publish(
                     (
@@ -141,7 +139,6 @@ impl SubscriptionContract {
                 if subscription.balance < fee {
                     subscription.status = SubscriptionStatus::Suspended;
                     // Publish suspended event
-                    #[cfg(not(feature = "cvt"))]
                     {
                     e.events().publish(
                         (
@@ -252,7 +249,6 @@ impl SubscriptionContract {
         e.extend_subscription_ttl(subscription_id, calc_ledgers_to_live(&e, retention_fee, subscription.balance));
         // Publish subscription created event
         let data = (subscription_id, subscription.clone());
-        #[cfg(not(feature = "cvt"))]
         e.events()
             .publish((REFLECTOR, symbol_short!("created"), subscription.owner), data.clone());
         return data;
@@ -305,7 +301,6 @@ impl SubscriptionContract {
         // Extend TTL based on the subscription retention fee and balance
         e.extend_subscription_ttl(subscription_id, calc_ledgers_to_live(&e, retention_fee, subscription.balance));
         // Publish subscription deposited event
-        #[cfg(not(feature = "cvt"))]
         {
             e.events().publish(
                 (REFLECTOR, symbol_short!("deposited"), subscription.owner.clone()),
@@ -346,7 +341,6 @@ impl SubscriptionContract {
         // Remove subscription from the state
         e.remove_subscription(subscription_id);
         // Publish subscription cancelled event
-        #[cfg(not(feature = "cvt"))]
         {
             e.events()
              .publish((REFLECTOR, symbol_short!("cancelled"), subscription.owner), subscription_id);
