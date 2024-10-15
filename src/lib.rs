@@ -3,10 +3,17 @@
 mod extensions;
 mod types;
 
+pub mod certora;
+
 use extensions::{env_extensions::EnvExtensions, u128_extensions::U128Extensions};
 use soroban_sdk::{
-    contract, contractimpl, panic_with_error, symbol_short, token::TokenClient, Address, BytesN, Env, Symbol, Vec,
+    contract, contractimpl, panic_with_error, symbol_short,
+    Address, BytesN, Env, Symbol, Vec,
 };
+#[cfg(feature = "cvt")]
+use certora::token::TokenClient;
+#[cfg(not(feature = "cvt"))]
+use soroban_sdk::token::TokenClient;
 use types::{
     contract_config::ContractConfig, error::Error, subscription::Subscription,
     subscription_init_params::SubscriptionInitParams, subscription_status::SubscriptionStatus, ticker_asset::TickerAsset,
