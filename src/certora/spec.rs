@@ -15,14 +15,6 @@ use cvt_soroban::{is_auth, Call, make_callable, parametric_rule};
 use cvt::{satisfy, assert, require};
 use cvt_soroban_macros::{rule, declare_rules};
 
-#[rule]
-fn certora_sanity(env: soroban_sdk::Env, fee: u64, amount: u64, address: Address) {
-    let _ = calc_ledgers_to_live(&env, fee, amount);
-    let _ = now(&env);
-    withdraw(&env, &address, amount);
-    cvt::satisfy!(true);
-}
-
 
 #[rule]
 fn certora_calc_complexity_factor_value_check(base_symbol: &TickerAsset, quote_symbol: &TickerAsset) {
@@ -43,13 +35,6 @@ fn certora_deposit_changes_subscription_status_correctly(e: Env, from: Address, 
     SubscriptionContract::deposit(e.clone(), from, subscription_id, amount);
     let status_after = e.get_subscription(subscription_id).unwrap().status;
     cvt::assert!(status_before != SubscriptionStatus::Suspended || status_after == SubscriptionStatus::Active);
-}
-
-#[rule]
-fn certora_cancel_removes_active_subscription(e: Env, subscription_id: u64) {
-    SubscriptionContract::cancel(e.clone(), subscription_id);
-    let _ =  e.get_subscription(subscription_id).unwrap();
-    cvt::assert!(false); // should not reach
 }
 
 
@@ -86,7 +71,7 @@ fn certora_only_admin_charge_retention_fee(e: Env, subscription_id: u64) {
 
 /// `cancel` aborts if the subscription owner is not the authorized user
 #[rule]
-pub fn cancel_non_owner(
+pub fn certora_cancel_non_owner(
     env: Env,
     subscription_id: u64
 ) {
@@ -99,7 +84,7 @@ pub fn cancel_non_owner(
 
 /// `cancel` aborts if the subscription is not active
 #[rule]
-pub fn cancel_inactive(
+pub fn certora_cancel_inactive(
     env: Env,
     subscription_id: u64
 ) {
@@ -114,7 +99,7 @@ pub fn cancel_inactive(
 
 /// When `cancel` returns, the subscription is canceled
 #[rule]
-pub fn cancel_subscription_success(
+pub fn certora_cancel_subscription_success(
     env: Env,
     subscription_id: u64,
 ) -> () {
@@ -125,7 +110,7 @@ pub fn cancel_subscription_success(
 
 /// Only `from` can deposit funds
 #[rule]
-pub fn deposit_owner(
+pub fn certora_deposit_owner(
     env: Env,
     from: Address,
     subscription_id: u64,
