@@ -109,7 +109,7 @@ impl SubscriptionContract {
     // # Panics
     //
     // Panics if the caller doesn't match admin address
-    pub fn charge(e: Env, subscription_id: u64, now: u64, days_charged: u64) {
+    pub fn charge(e: Env, subscription_id: u64, fee: u64, now: u64, days_charged: u64) {
         e.panic_if_not_admin();
         let mut total_charge: u64 = 0;
         // let now = now(&e);
@@ -118,7 +118,7 @@ impl SubscriptionContract {
             // We can charge fees for several days in case if there was an interruption in background worker charge process
             // let days_charged = (now - subscription.updated) / DAY;
             if days_charged != 0 {
-                let fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
+                // let fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
                 let mut charge = days_charged * fee;
                 // Do not charge more than left on the subscription balance
                 if subscription.balance < charge {
@@ -495,7 +495,7 @@ impl SubscriptionContract {
     }
 }
 
-pub fn calc_fee(
+pub (crate) fn calc_fee(
     base_fee: u64,
     base_symbol: &TickerAsset,
     quote_symbol: &TickerAsset,
