@@ -108,64 +108,6 @@ impl SubscriptionContract {
     // # Panics
     //
     // Panics if the caller doesn't match admin address
-
-    /*
-    pub fn charge(e: Env, subscription_id: u64, fee: u64, now: u64, days_charged: u64) {
-        e.panic_if_not_admin();
-        let mut total_charge: u64 = 0;
-        // let now = now(&e);
-        // for subscription_id in subscription_ids.iter() { // CHECK FOR A SINGLE ID ONLY FOR NOW
-        if let Some(mut subscription) = e.get_subscription(subscription_id) {
-            // We can charge fees for several days in case if there was an interruption in background worker charge process
-            // let days_charged = (now - subscription.updated) / DAY;
-            if days_charged != 0 {
-                // let fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
-                let mut charge = days_charged * fee;
-                // Do not charge more than left on the subscription balance
-                if subscription.balance < charge {
-                    charge = subscription.balance;
-                }
-                // Deduct calculated retention fees
-                subscription.balance -= charge;
-                subscription.updated = now;
-                // Publish charged event
-                #[cfg(not(feature = "cvt"))]
-                e.events().publish(
-                    (
-                        REFLECTOR,
-                        symbol_short!("charged"),
-                        subscription.owner.clone(),
-                    ),
-                    (subscription_id, charge, now),
-                );
-                // Deactivate the subscription if the balance is less than the daily retention fee
-                if subscription.balance < fee {
-                    subscription.status = SubscriptionStatus::Suspended;
-                    // Publish suspended event
-                    #[cfg(not(feature = "cvt"))]
-                    e.events().publish(
-                        (
-                            REFLECTOR,
-                            symbol_short!("suspended"),
-                            subscription.owner.clone(),
-                        ),
-                        (subscription_id, now),
-                    );
-                }
-                // Update subscription properties
-                e.set_subscription(subscription_id, &subscription);
-                // Sum all retention fee charges
-                total_charge += charge;
-            }
-        }
-        // }
-        // Burn tokens charged from all subscriptions
-        if total_charge > 0 {
-            get_token_client(&e).burn(&e.current_contract_address(), &(total_charge as i128));
-        }
-    }
-    */
-
     pub fn charge(e: Env, subscription_ids: Vec<u64>) {
         e.panic_if_not_admin();
         let mut total_charge: u64 = 0;
