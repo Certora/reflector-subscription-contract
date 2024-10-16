@@ -60,19 +60,19 @@ fn certora_config_only_once_b(e: Env) {
 }
 
 #[rule]
-fn certora_only_admin_charge_retention_fee_sanity(e: Env, subscription_id: u64, now: u64, days_charged: u64) {
+fn certora_only_admin_charge_retention_fee_sanity(e: Env, subscription_id: u64) {
     let subscription = e.get_subscription(subscription_id).unwrap();
     let fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
     cvt::require!(e.storage().instance().has(&"admin") && is_auth(e.get_admin().unwrap()), "admin exists and authorized");
-    SubscriptionContract::charge(e, subscription_id, fee, now, days_charged);
+    SubscriptionContract::charge(e, subscription_id);
     cvt::satisfy!(true);
 }
 
 #[rule]
-fn certora_only_admin_charge_retention_fee(e: Env, subscription_id: u64, now: u64, days_charged: u64) {
+fn certora_only_admin_charge_retention_fee(e: Env, subscription_id: u64) {
    let subscription = e.get_subscription(subscription_id).unwrap();
     let fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
     cvt::require!(!is_auth(e.get_admin().unwrap()), "admin is authorized");
-    SubscriptionContract::charge(e, subscription_id, fee, now, days_charged);
+    SubscriptionContract::charge(e, subscription_id);
     cvt::assert!(false); // should not reach
 }
