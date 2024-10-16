@@ -10,7 +10,6 @@ crate-type = ["cdylib"]
 opt-level = "z"
 overflow-checks = true
 debug = 0
-strip = "symbols"
 debug-assertions = false
 panic = "abort"
 codegen-units = 1
@@ -23,6 +22,11 @@ cvt = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban", 
 cvt-soroban = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban", default-features=false}
 cvt-soroban-macros = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban", default-features=false}
 paste = "1.0.5"
+
+nondet = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban", default-features=false, features=["soroban"]}
+cvt = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban", default-features=false, features=[]}
+cvt-soroban = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban", default-features=false}
+cvt-soroban-macros = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban", default-features=false}
 
 [dev-dependencies]
 soroban-sdk = { version = "21.6.0", features = ["testutils"] }

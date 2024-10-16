@@ -683,6 +683,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "nondet"
+version = "0.2.0"
+source = "git+https://github.com/Certora/solana-cvt.git?branch=dev-soroban#3cadeb499cdd180cab2e200ad31cc7e602ebeee7"
+dependencies = [
+ "cvt",
+ "soroban-sdk",
+ "stubs",
+]
+
+[[package]]
 name = "num-bigint"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1264,6 +1274,11 @@ version = "0.1.0"
 source = "git+https://github.com/Certora/solana-cvt.git?branch=dev-soroban#3851ae894364e1243e1d8b314dff0e78777ca3bf"
 
 [[package]]
+name = "stubs"
+version = "0.1.0"
+source = "git+https://github.com/Certora/solana-cvt.git?branch=dev-soroban#3cadeb499cdd180cab2e200ad31cc7e602ebeee7"
+
+[[package]]
 name = "subtle"
 version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1342,6 +1357,15 @@ name = "unicode-ident"
 version = "1.0.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e91b56cd4cadaeb79bbf1a5645f6b4f8dc5bde8834ad5894a8db35fda9efa1fe"
+
+[[package]]
+name = "uuid"
+version = "1.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "81dfa00651efa65069b0b6b651f4aaa31ba9e3c3ce0137aaad053604ee7e0314"
+dependencies = [
+ "getrandom",
+]
 
 [[package]]
 name = "uuid"

@@ -1,4 +1,4 @@
-use soroban_sdk::{contracttype, Address, Bytes};
+use soroban_sdk::{contracttype, xdr::NodeId, Address, Bytes};
 
 use super::{subscription_status::SubscriptionStatus, ticker_asset::TickerAsset};
 
@@ -9,9 +9,9 @@ use super::{subscription_status::SubscriptionStatus, ticker_asset::TickerAsset};
 pub struct Subscription {
     // Address of account that owns this subscription
     pub owner: Address,
-    // Base symbol
+    // // Base symbol
     pub base: TickerAsset,
-    // Quote symbol
+    // // Quote symbol
     pub quote: TickerAsset,
     // Price movement threshold that triggers subscription, in ‰
     pub threshold: u32,
