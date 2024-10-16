@@ -15,21 +15,6 @@ const LAST_SUBSCRIPTION_ID: &str = "last";
 const TOKEN_KEY: &str = "token";
 
 
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct CertoraStorage {
-    pub sub: Subscription
-}
-
-
-impl Nondet for CertoraStorage {
-    fn nondet() -> Self {
-        CertoraStorage {
-            sub: Subscription::nondet(),
-        }
-    }
-}
-
-
 pub trait EnvExtensions {
     fn get_admin(&self) -> Option<Address>;
 

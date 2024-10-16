@@ -13,13 +13,3 @@ pub struct ContractConfig {
     // Base contract fee amount
     pub fee: u64
 }
-
-impl Nondet for ContractConfig {
-    fn nondet() -> Self {
-        return ContractConfig {
-            admin: Address::nondet(),
-            token: Address::nondet(),
-            fee: u64::nondet()
-        };
-    }
-}

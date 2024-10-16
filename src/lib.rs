@@ -129,7 +129,7 @@ impl SubscriptionContract {
                 subscription.updated = now;
                 // Publish charged event
                 #[cfg(not(feature = "cvt"))]
-                e.events().publish( // NEEDS TO BE SUPPORTED
+                e.events().publish(
                     (
                         REFLECTOR,
                         symbol_short!("charged"),

@@ -11,13 +11,3 @@ pub struct TickerAsset {
     // Price feed source
     pub source: String
 } 
-
-
-impl Nondet for TickerAsset {
-    fn nondet() -> Self {
-        TickerAsset {
-            asset: String::nondet(),
-            source: String::nondet()
-        }
-    }
-}

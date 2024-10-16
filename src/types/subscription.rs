@@ -28,20 +28,3 @@ pub struct Subscription {
     // Last updated timestamp
     pub updated: u64
 }
-
-
-impl Nondet for Subscription {
-    fn nondet() -> Self {
-        Subscription {
-            owner: Address::nondet(),
-            base: TickerAsset::nondet(),
-            quote: TickerAsset::nondet(),
-            threshold: u32::nondet(),
-            heartbeat: u32::nondet(),
-            webhook: Bytes::nondet(),
-            balance: u64::nondet(),
-            status: SubscriptionStatus::nondet(),
-            updated: u64::nondet(),
-        }
-    }
-}
