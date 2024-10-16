@@ -5,7 +5,6 @@ mod extensions;
 mod types;
 
 use extensions::{env_extensions::EnvExtensions, u128_extensions::U128Extensions};
-use nondet::*;
 use soroban_sdk::{
     contract, contractimpl, panic_with_error, symbol_short, Address, BytesN, Env, Symbol, Vec,
 };
