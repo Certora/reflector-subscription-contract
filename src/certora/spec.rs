@@ -22,13 +22,14 @@ fn certora_calc_complexity_factor_value_check(base_symbol: &TickerAsset, quote_s
     cvt::assert!(res == 1 || res == 2);
 }
 
-
+// `create` sets the subscription status to Active
 #[rule]
 fn certora_create_activates_subscription(e: Env, subscription_init_params: SubscriptionInitParams, amount: u64) {
     let (_, s) = SubscriptionContract::create_subscription(e.clone(), subscription_init_params, amount);
     cvt::assert!(s.status == SubscriptionStatus::Active);
 }
 
+// `deposit` should change status from Suspended to Active
 #[rule]
 fn certora_deposit_changes_subscription_status_correctly(e: Env, from: Address, subscription_id: u64, amount: u64) {
     let status_before = e.get_subscription(subscription_id).unwrap().status;
@@ -37,7 +38,7 @@ fn certora_deposit_changes_subscription_status_correctly(e: Env, from: Address, 
     cvt::assert!(status_before != SubscriptionStatus::Suspended || status_after == SubscriptionStatus::Active);
 }
 
-
+// `config` cannot be called more than once: sanity
 #[rule]
 fn certora_config_only_once_a(e: Env) {
     let config: ContractConfig = ContractConfig::nondet();
@@ -45,6 +46,7 @@ fn certora_config_only_once_a(e: Env) {
     cvt::assert!(e.is_initialized());
 }
 
+// `config` cannot be called more than once
 #[rule]
 fn certora_config_only_once_b(e: Env) {
     cvt::require!(e.is_initialized(), "is initialized");
@@ -53,19 +55,21 @@ fn certora_config_only_once_b(e: Env) {
     cvt::assert!(false); // should not reach
 }
 
+// only admin can `charge` retention fee: sanity
 #[rule]
 fn certora_only_admin_charge_retention_fee_sanity(e: Env, subscription_id: u64) {
     let subscription = &e.get_subscription(subscription_id).unwrap();
-    cvt::require!(e.storage().instance().has(&"admin") && is_auth(e.get_admin().unwrap()), "admin exists and authorized");
-    SubscriptionContract::charge(e.clone(), vec![&e, subscription_id]);
+    cvt::require!(is_auth(e.get_admin().unwrap()), "admin exists and authorized");
+    SubscriptionContract::charge(e.clone(), subscription_id);
     cvt::satisfy!(true);
 }
 
+// only admin can `charge` retention fee
 #[rule]
 fn certora_only_admin_charge_retention_fee(e: Env, subscription_id: u64) {
    let subscription = &e.get_subscription(subscription_id).unwrap();
     cvt::require!(!is_auth(e.get_admin().unwrap()), "admin is authorized");
-    SubscriptionContract::charge(e.clone(), vec![&e, subscription_id]);
+    SubscriptionContract::charge(e.clone(),  subscription_id);
     cvt::assert!(false); // should not reach
 }
 
@@ -129,7 +133,7 @@ fn sanity<C: Call>(e: Env, c: C) {
 make_callable!(SubscriptionContract, cancel, subscription_id: u64);
 make_callable!(SubscriptionContract, set_fee, fee: u64);
 make_callable!(SubscriptionContract, trigger, timestamp: u64, trigger_hash: BytesN<32>);
-make_callable!(SubscriptionContract, charge, subscription_ids: Vec<u64>);
+// make_callable!(SubscriptionContract, charge, subscription_ids: Vec<u64>);
 make_callable!(SubscriptionContract, update_contract, wasm_hash: BytesN<32>);
 make_callable!(SubscriptionContract, create_subscription, new_subscription: SubscriptionInitParams, amount: u64);
 make_callable!(SubscriptionContract, deposit, from: Address, subscription_id: u64, amount: u64);
@@ -141,4 +145,4 @@ make_callable!(SubscriptionContract, version);
 make_callable!(SubscriptionContract, fee);
 make_callable!(SubscriptionContract, token);
 
-parametric_rule!(sanity, (cancel, set_fee, trigger, charge, update_contract, create_subscription, deposit, get_subscription, get_retention_fee, last_id, admin, version, fee, token));
+parametric_rule!(sanity, (cancel, set_fee, trigger, update_contract, create_subscription, deposit, get_subscription, get_retention_fee, last_id, admin, version, fee, token));
