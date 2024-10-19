@@ -57,19 +57,17 @@ fn certora_config_only_once_b(e: Env) {
 
 // only admin can `charge` retention fee: sanity
 #[rule]
-fn certora_only_admin_charge_retention_fee_sanity(e: Env, subscription_id: u64) {
-    let subscription = &e.get_subscription(subscription_id).unwrap();
+fn certora_only_admin_charge_retention_fee_sanity(e: Env, subscription_ids: Vec<u64>) {
     cvt::require!(is_auth(e.get_admin().unwrap()), "admin exists and authorized");
-    SubscriptionContract::charge(e.clone(), subscription_id);
+    SubscriptionContract::charge(e.clone(), subscription_ids);
     cvt::satisfy!(true);
 }
 
 // only admin can `charge` retention fee
 #[rule]
-fn certora_only_admin_charge_retention_fee(e: Env, subscription_id: u64) {
-   let subscription = &e.get_subscription(subscription_id).unwrap();
+fn certora_only_admin_charge_retention_fee(e: Env, subscription_ids: Vec<u64>) {
     cvt::require!(!is_auth(e.get_admin().unwrap()), "admin is authorized");
-    SubscriptionContract::charge(e.clone(),  subscription_id);
+    SubscriptionContract::charge(e.clone(),  subscription_ids);
     cvt::assert!(false); // should not reach
 }
 
@@ -133,7 +131,7 @@ fn sanity<C: Call>(e: Env, c: C) {
 make_callable!(SubscriptionContract, cancel, subscription_id: u64);
 make_callable!(SubscriptionContract, set_fee, fee: u64);
 make_callable!(SubscriptionContract, trigger, timestamp: u64, trigger_hash: BytesN<32>);
-// make_callable!(SubscriptionContract, charge, subscription_ids: Vec<u64>);
+make_callable!(SubscriptionContract, charge, subscription_ids: Vec<u64>);
 make_callable!(SubscriptionContract, update_contract, wasm_hash: BytesN<32>);
 make_callable!(SubscriptionContract, create_subscription, new_subscription: SubscriptionInitParams, amount: u64);
 make_callable!(SubscriptionContract, deposit, from: Address, subscription_id: u64, amount: u64);
@@ -145,4 +143,4 @@ make_callable!(SubscriptionContract, version);
 make_callable!(SubscriptionContract, fee);
 make_callable!(SubscriptionContract, token);
 
-parametric_rule!(sanity, (cancel, set_fee, trigger, update_contract, create_subscription, deposit, get_subscription, get_retention_fee, last_id, admin, version, fee, token));
+parametric_rule!(sanity, (cancel, set_fee, trigger, update_contract, charge, create_subscription, deposit, get_subscription, get_retention_fee, last_id, admin, version, fee, token));
