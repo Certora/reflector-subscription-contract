@@ -123,11 +123,19 @@ impl SubscriptionContract {
                 // We can charge fees for several days in case if there was an interruption in background worker charge process
                 let days_charged = (now - subscription.updated) / DAY;
                 if days_charged != 0 {
-                    let fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
+                    let fee = calc_fee(
+                        e.get_fee(),
+                        &subscription.base,
+                        &subscription.quote,
+                        subscription.heartbeat,
+                    );
                     // fee[id] = fee
                     #[cfg(feature = "cvt")]
                     unsafe {
-                        GHOST_FEES_CHARGED.set(&subscription_id, fee + GHOST_FEES_CHARGED.get(&subscription_id));
+                        GHOST_FEES_CHARGED.set(
+                            &subscription_id,
+                            fee + GHOST_FEES_CHARGED.get(&subscription_id),
+                        );
                     }
                     let mut charge = days_charged * fee;
                     // Do not charge more than left on the subscription balance
@@ -139,7 +147,7 @@ impl SubscriptionContract {
                     subscription.updated = now;
                     // Publish charged event
                     #[cfg(not(feature = "cvt"))]
-                    e.events().publish( // NEEDS TO BE SUPPORTED
+                    e.events().publish(
                         (
                             REFLECTOR,
                             symbol_short!("charged"),

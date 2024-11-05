@@ -19,10 +19,7 @@ pub fn sunbeam_calc_complexity_factor_value_check(base_symbol: &TickerAsset, quo
     cvt::assert!(res == 1 || res == 2);
 }
 
-/* - changed the signature of `charge` to take `fee`, `now`, and `days_charged`.
-   - removed for loop so only checks for a single id for now
-   - updated condition that checks `if days_charged == 0` accordingly without changing semantics
-   - will remove the fee passing once compilert work is done
+/* - Uses ghost variable to track the changes to fee.
 */
 #[rule]
 pub fn sunbeam_charge_suspends_subscription_correctly(e: Env, subscription_id: u64, subscription_ids: Vec<u64>) {
@@ -36,7 +33,7 @@ pub fn sunbeam_charge_suspends_subscription_correctly(e: Env, subscription_id: u
         let subscription = e.get_subscription(subscription_id).unwrap();
         let now = now(&e);
         let days_charged = (now - subscription.updated) / DAY;
-        cvt::require!(days_charged != 0, "assume assume assume");
+        cvt::require!(days_charged != 0, "assume days charged is not 0");
     }
 
     SubscriptionContract::charge(e.clone(), subscription_ids);
