@@ -199,4 +199,3 @@ make_callable!(SubscriptionContract, fee);
 make_callable!(SubscriptionContract, token);
 
 parametric_rule!(sanity, (cancel, set_fee, trigger, charge, update_contract, create_subscription, deposit, get_subscription, get_retention_fee, last_id, admin, version, fee, token));
-
