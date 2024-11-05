@@ -1,7 +1,7 @@
 use nondet::Nondet;
-use soroban_sdk::{Address, Env};
-
-use crate::{calc_complexity_factor, calc_ledgers_to_live, extensions::env_extensions::EnvExtensions, now, types::{contract_config::ContractConfig, subscription_init_params::SubscriptionInitParams, subscription_status::SubscriptionStatus, ticker_asset::TickerAsset}, withdraw, SubscriptionContract, DAY};
+use soroban_sdk::{Address, Env, Vec};
+use crate::certora::GhostMap;
+use crate::{calc_complexity_factor, calc_ledgers_to_live, extensions::env_extensions::EnvExtensions, now, types::{contract_config::ContractConfig, subscription_init_params::SubscriptionInitParams, subscription_status::SubscriptionStatus, ticker_asset::TickerAsset}, withdraw, SubscriptionContract, DAY, GHOST_FEES_CHARGED};
 
 extern "C" {
     fn CVT_SOROBAN_is_auth(address: u64) -> u64;
@@ -35,14 +35,70 @@ fn sunbeam_calc_complexity_factor_value_check(base_symbol: &TickerAsset, quote_s
 */
 #[no_mangle]
 #[inline(never)]
-fn sunbeam_charge_suspends_subscription_correctly(e: Env, subscription_id: u64, fee: u64) {
-    let now = now(&e);
-    let days_charged = (now - e.get_subscription(subscription_id).unwrap().updated) / DAY;
-    cvt::CVT_assume(days_charged != 0);
-    SubscriptionContract::charge(e.clone(), subscription_id.clone(), now, days_charged);
+fn sunbeam_charge_suspends_subscription_correctly(e: Env, subscription_id: u64, subscription_ids: Vec<u64>) {
+    // Initialize ghost state
+    unsafe {
+        GHOST_FEES_CHARGED.init(&subscription_id, 0);
+    }
+
+    // Preconditions
+    {
+        let subscription = e.get_subscription(subscription_id).unwrap();
+        let now = now(&e);
+        let days_charged = (now - subscription.updated) / DAY;
+        cvt::require!(days_charged != 0, "assume assume assume");
+    }
+
+    SubscriptionContract::charge(e.clone(), subscription_ids);
+
     let subscription = e.get_subscription(subscription_id).unwrap();
+    unsafe {
+        let fee = GHOST_FEES_CHARGED.get(&subscription_id);
+        cvt::assert!(fee == 0 || subscription.balance >= fee || (subscription.status == SubscriptionStatus::Suspended));
+    }
+}
+
+#[no_mangle]
+pub fn cancel_invalidates_charge(e: Env, subscription_id: u64, subscription_ids: Vec<u64>) {
+    // Initialize ghost state
+    unsafe {
+        GHOST_FEES_CHARGED.init(&subscription_id, 0);
+    }
+    SubscriptionContract::cancel(e.clone(), subscription_id);
+    SubscriptionContract::charge(e.clone(), subscription_ids);
+    unsafe {
+        cvt::assert!(GHOST_FEES_CHARGED.get(&subscription_id) == 0);
+    }
+}
+
+#[no_mangle]
+pub fn cancel_invalidates_deposit(e: Env, from: Address, subscription_id: u64, amount: u64) {
+    SubscriptionContract::cancel(e.clone(), subscription_id);
+    SubscriptionContract::deposit(e.clone(), from, subscription_id, amount);
     cvt::assert!(false);
-   //  cvt::assert!(subscription.balance >= fee || (subscription.status == SubscriptionStatus::Suspended));
+}
+
+#[no_mangle]
+pub fn cancel_invalidates_cancel(e: Env, subscription_id: u64) {
+    cvt::require!(subscription_id < i32::MAX as u64, "TEMP");
+    SubscriptionContract::cancel(e.clone(), subscription_id);
+    SubscriptionContract::cancel(e.clone(), subscription_id);
+    cvt::assert!(false);
+}
+
+#[no_mangle]
+pub fn cancel_invalidates_get_subscription(e: Env, subscription_id: u64) {
+    cvt::require!(subscription_id < i32::MAX as u64, "TEMP");
+    SubscriptionContract::cancel(e.clone(), subscription_id);
+    SubscriptionContract::get_subscription(e.clone(), subscription_id);
+    cvt::assert!(false);
+}
+
+#[no_mangle]
+#[inline(never)]
+fn sunbeam_charge_sanity(e: Env, subscription_id: u64, subscription_ids: Vec<u64>) {
+    SubscriptionContract::charge(e.clone(), subscription_ids);
+    cvt::satisfy!(true);
 }
 
 /* - commented out ttl, event */
@@ -96,16 +152,16 @@ fn sunbeam_config_only_once_b(e: Env) {
 
 #[no_mangle]
 #[inline(never)]
-fn sunbeam_only_admin_charge_retention_fee_sanity(e: Env, subscription_id: u64, fee: u64, now: u64, days_charged: u64) {
+fn sunbeam_only_admin_charge_retention_fee_sanity(e: Env, subscription_ids: Vec<u64>) {
     cvt::CVT_assume(e.storage().instance().has(&"admin") && is_auth(e.get_admin().unwrap()));
-    SubscriptionContract::charge(e, subscription_id, now, days_charged);
+    SubscriptionContract::charge(e, subscription_ids);
     cvt::assert!(false); // should fail
 }
 
 #[no_mangle]
 #[inline(never)]
-fn sunbeam_only_admin_charge_retention_fee(e: Env, subscription_id: u64, fee: u64, now: u64, days_charged: u64) {
+fn sunbeam_only_admin_charge_retention_fee(e: Env, subscription_ids: Vec<u64>) {
     cvt::CVT_assume(!is_auth(e.get_admin().unwrap()));
-    SubscriptionContract::charge(e, subscription_id, now, days_charged);
+    SubscriptionContract::charge(e, subscription_ids);
     cvt::assert!(false); // should not reach
 }
