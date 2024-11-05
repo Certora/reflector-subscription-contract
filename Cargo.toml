@@ -22,6 +22,7 @@ cvt = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban"}
 cvt-soroban = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban"}
 cvt-soroban-macros = {git = "https://github.com/Certora/solana-cvt.git", branch="dev-soroban"}
 
+
 [dev-dependencies]
 soroban-sdk = { version = "21.6.0", features = ["testutils"] }
 

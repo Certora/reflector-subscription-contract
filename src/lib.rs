@@ -6,12 +6,16 @@ mod types;
 
 use certora::GhostMap;
 
-use extensions::{env_extensions::EnvExtensions, u128_extensions::U128Extensions};
-use nondet::*;
-use soroban_sdk::{
-    contract, contractimpl, panic_with_error, symbol_short, Address, BytesN, Env, Symbol, Vec,
-};
 
+use extensions::{env_extensions::EnvExtensions, u128_extensions::U128Extensions};
+use soroban_sdk::{
+    contract, contractimpl, panic_with_error, symbol_short,
+    Address, BytesN, Env, Symbol, Vec,
+};
+#[cfg(feature = "cvt")]
+use certora::token::TokenClient;
+#[cfg(not(feature = "cvt"))]
+use soroban_sdk::token::TokenClient;
 use types::{
     contract_config::ContractConfig,
     error::Error,
@@ -104,6 +108,7 @@ impl SubscriptionContract {
         );
     }
 
+ 
     // Charge retention fees from the subscription balances
     // Can be invoked only by the admin account
     //
@@ -181,7 +186,8 @@ impl SubscriptionContract {
             get_token_client(&e).burn(&e.current_contract_address(), &(total_charge as i128));
         }
     }
-
+  
+  
     // Update the contract source code
     // Can be invoked only by the admin account
     //
@@ -513,7 +519,7 @@ impl SubscriptionContract {
     }
 }
 
-pub fn calc_fee(
+pub (crate) fn calc_fee(
     base_fee: u64,
     base_symbol: &TickerAsset,
     quote_symbol: &TickerAsset,

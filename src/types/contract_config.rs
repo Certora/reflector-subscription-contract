@@ -1,5 +1,5 @@
-use nondet::Nondet;
 use soroban_sdk::{contracttype, Address};
+use nondet::Nondet;
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]

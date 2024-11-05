@@ -40,3 +40,4 @@ impl <K: Clone + Eq, V: Nondet + Clone> GhostMap<K, V> {
         }
     }
 }
+
