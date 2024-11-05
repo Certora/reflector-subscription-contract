@@ -4,7 +4,8 @@ mod certora;
 mod extensions;
 mod types;
 
-pub mod certora;
+use certora::GhostMap;
+
 
 use extensions::{env_extensions::EnvExtensions, u128_extensions::U128Extensions};
 use soroban_sdk::{
@@ -42,6 +43,9 @@ const MIN_HEARTBEAT: u32 = 5;
 
 #[contract]
 pub struct SubscriptionContract;
+
+#[cfg(feature = "cvt")]
+pub(crate) static mut GHOST_FEES_CHARGED: GhostMap<u64, u64> = GhostMap::UnInit;
 
 #[contractimpl]
 impl SubscriptionContract {
@@ -104,6 +108,7 @@ impl SubscriptionContract {
         );
     }
 
+ 
     // Charge retention fees from the subscription balances
     // Can be invoked only by the admin account
     //
@@ -122,44 +127,58 @@ impl SubscriptionContract {
             if let Some(mut subscription) = e.get_subscription(subscription_id) {
                 // We can charge fees for several days in case if there was an interruption in background worker charge process
                 let days_charged = (now - subscription.updated) / DAY;
-                if days_charged == 0 {
-                    continue;
-                }
-                let fee = calc_fee(e.get_fee(), &subscription.base, &subscription.quote, subscription.heartbeat);
-                let mut charge = days_charged * fee;
-                // Do not charge more than left on the subscription balance
-                if subscription.balance < charge {
-                    charge = subscription.balance;
-                }
-                // Deduct calculated retention fees
-                subscription.balance -= charge;
-                subscription.updated = now;
-                // Publish charged event
-                e.events().publish(
-                    (
-                        REFLECTOR,
-                        symbol_short!("charged"),
-                        subscription.owner.clone(),
-                    ),
-                    (subscription_id, charge, now),
-                );
-                // Deactivate the subscription if the balance is less than the daily retention fee
-                if subscription.balance < fee {
-                    subscription.status = SubscriptionStatus::Suspended;
-                    // Publish suspended event
+                if days_charged != 0 {
+                    let fee = calc_fee(
+                        e.get_fee(),
+                        &subscription.base,
+                        &subscription.quote,
+                        subscription.heartbeat,
+                    );
+                    // fee[id] = fee
+                    #[cfg(feature = "cvt")]
+                    unsafe {
+                        GHOST_FEES_CHARGED.set(
+                            &subscription_id,
+                            fee + GHOST_FEES_CHARGED.get(&subscription_id),
+                        );
+                    }
+                    let mut charge = days_charged * fee;
+                    // Do not charge more than left on the subscription balance
+                    if subscription.balance < charge {
+                        charge = subscription.balance;
+                    }
+                    // Deduct calculated retention fees
+                    subscription.balance -= charge;
+                    subscription.updated = now;
+                    // Publish charged event
+                    #[cfg(not(feature = "cvt"))]
                     e.events().publish(
                         (
                             REFLECTOR,
-                            symbol_short!("suspended"),
+                            symbol_short!("charged"),
                             subscription.owner.clone(),
                         ),
-                        (subscription_id, now),
+                        (subscription_id, charge, now),
                     );
+                    // Deactivate the subscription if the balance is less than the daily retention fee
+                    if subscription.balance < fee {
+                        subscription.status = SubscriptionStatus::Suspended;
+                        // Publish suspended event
+                        #[cfg(not(feature = "cvt"))]
+                        e.events().publish(
+                            (
+                                REFLECTOR,
+                                symbol_short!("suspended"),
+                                subscription.owner.clone(),
+                            ),
+                            (subscription_id, now),
+                        );
+                    }
+                    // Update subscription properties
+                    e.set_subscription(subscription_id, &subscription);
+                    // Sum all retention fee charges
+                    total_charge += charge;
                 }
-                // Update subscription properties
-                e.set_subscription(subscription_id, &subscription);
-                // Sum all retention fee charges
-                total_charge += charge;
             }
         }
         // Burn tokens charged from all subscriptions
@@ -167,7 +186,8 @@ impl SubscriptionContract {
             get_token_client(&e).burn(&e.current_contract_address(), &(total_charge as i128));
         }
     }
-
+  
+  
     // Update the contract source code
     // Can be invoked only by the admin account
     //
