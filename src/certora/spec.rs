@@ -116,7 +116,7 @@ pub fn certora_config_only_once_b(e: Env) {
 pub fn certora_only_admin_charge_retention_fee_sanity(e: Env, subscription_ids: Vec<u64>) {
     cvt::CVT_assume(e.storage().instance().has(&"admin") && is_auth(e.get_admin().unwrap()));
     SubscriptionContract::charge(e, subscription_ids);
-    cvt::satisfy!(true); // should fail
+    cvt::satisfy!(true);
 }
 
 #[rule]
