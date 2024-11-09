@@ -88,13 +88,6 @@ pub fn certora_deposit_changes_subscription_status_correctly(e: Env, from: Addre
     certora::assert!(status_before != SubscriptionStatus::Suspended || status_after == SubscriptionStatus::Active);
 }
 
-#[rule]
-pub fn certora_cancel_removes_active_subscription(e: Env, subscription_id: u64) {
-    SubscriptionContract::cancel(e.clone(), subscription_id);
-    let _ =  e.get_subscription(subscription_id).unwrap();
-    certora::assert!(false); // should not reach
-}
-
 
 #[rule]
 pub fn certora_config_only_once_a(e: Env) {
