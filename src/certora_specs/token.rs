@@ -1,5 +1,5 @@
 use soroban_sdk::{Env, Address, String};
-use cvt_soroban_macros::cvt_contractclient as mockclient;
+use certora_soroban_macros::certora_contractclient as mockclient;
 
 #[mockclient(name = "TokenClient")]
 trait _TokenInterface {

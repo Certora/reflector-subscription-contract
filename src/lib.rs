@@ -1,10 +1,10 @@
 #![no_std]
 
-mod certora;
+mod certora_specs;
 mod extensions;
 mod types;
 
-use certora::GhostMap;
+use certora_specs::GhostMap;
 
 
 use extensions::{env_extensions::EnvExtensions, u128_extensions::U128Extensions};
@@ -12,10 +12,6 @@ use soroban_sdk::{
     contract, contractimpl, panic_with_error, symbol_short,
     Address, BytesN, Env, Symbol, Vec,
 };
-#[cfg(feature = "cvt")]
-use certora::token::TokenClient;
-#[cfg(not(feature = "cvt"))]
-use soroban_sdk::token::TokenClient;
 use types::{
     contract_config::ContractConfig,
     error::Error,
@@ -25,9 +21,9 @@ use types::{
     ticker_asset::TickerAsset,
 };
 
-#[cfg(feature = "cvt")]
-use certora::token::TokenClient;
-#[cfg(not(feature = "cvt"))]
+#[cfg(feature = "certora")]
+use certora_specs::token::TokenClient;
+#[cfg(not(feature = "certora"))]
 use soroban_sdk::token::TokenClient;
 
 const REFLECTOR: Symbol = symbol_short!("reflector");
@@ -44,7 +40,7 @@ const MIN_HEARTBEAT: u32 = 5;
 #[contract]
 pub struct SubscriptionContract;
 
-#[cfg(feature = "cvt")]
+#[cfg(feature = "certora")]
 pub(crate) static mut GHOST_FEES_CHARGED: GhostMap<u64, u64> = GhostMap::UnInit;
 
 #[contractimpl]
@@ -135,7 +131,7 @@ impl SubscriptionContract {
                         subscription.heartbeat,
                     );
                     // fee[id] = fee
-                    #[cfg(feature = "cvt")]
+                    #[cfg(feature = "certora")]
                     unsafe {
                         GHOST_FEES_CHARGED.set(
                             &subscription_id,
@@ -151,7 +147,7 @@ impl SubscriptionContract {
                     subscription.balance -= charge;
                     subscription.updated = now;
                     // Publish charged event
-                    #[cfg(not(feature = "cvt"))]
+                    #[cfg(not(feature = "certora"))]
                     e.events().publish(
                         (
                             REFLECTOR,
@@ -164,7 +160,7 @@ impl SubscriptionContract {
                     if subscription.balance < fee {
                         subscription.status = SubscriptionStatus::Suspended;
                         // Publish suspended event
-                        #[cfg(not(feature = "cvt"))]
+                        #[cfg(not(feature = "certora"))]
                         e.events().publish(
                             (
                                 REFLECTOR,
@@ -277,14 +273,14 @@ impl SubscriptionContract {
         e.set_subscription(subscription_id, &subscription);
         e.set_last_subscription_id(subscription_id);
         // Extend TTL based on the subscription retention fee and balance
-        #[cfg(not(feature = "cvt"))]
+        #[cfg(not(feature = "certora"))]
         e.extend_subscription_ttl(
             subscription_id,
             calc_ledgers_to_live(&e, retention_fee, subscription.balance),
         );
         // Publish subscription created event
         let data = (subscription_id, subscription.clone());
-        #[cfg(not(feature = "cvt"))]
+        #[cfg(not(feature = "certora"))]
         e.events().publish(
             (REFLECTOR, symbol_short!("created"), subscription.owner),
             data.clone(),
@@ -342,13 +338,13 @@ impl SubscriptionContract {
         // Update state
         e.set_subscription(subscription_id, &subscription);
         // Extend TTL based on the subscription retention fee and balance
-        #[cfg(not(feature = "cvt"))]
+        #[cfg(not(feature = "certora"))]
         e.extend_subscription_ttl(
             subscription_id,
             calc_ledgers_to_live(&e, retention_fee, subscription.balance),
         );
         // Publish subscription deposited event
-        #[cfg(not(feature = "cvt"))]
+        #[cfg(not(feature = "certora"))]
         e.events().publish(
             (
                 REFLECTOR,
@@ -392,7 +388,7 @@ impl SubscriptionContract {
         // Remove subscription from the state
         e.remove_subscription(subscription_id);
         // Publish subscription cancelled event
-        #[cfg(not(feature = "cvt"))]
+        #[cfg(not(feature = "certora"))]
         e.events().publish(
             (REFLECTOR, symbol_short!("cancelled"), subscription.owner),
             subscription_id,
